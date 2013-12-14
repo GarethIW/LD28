@@ -63,6 +63,7 @@ namespace LD28
 
         double knockbackTime = 0;
         double deadTime = 0;
+        double justChangedDirTime = 0;
         float alpha = 1f;
 
         bool pickingUp = false;
@@ -176,6 +177,7 @@ namespace LD28
             Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
             Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
             Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
+            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
 
             skeleton.RootBone.X = Position.X;
             skeleton.RootBone.Y = Position.Y;
@@ -199,11 +201,15 @@ namespace LD28
 
                 if (!IsPlayer)
                 {
+                    justChangedDirTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
                     switch (State)
                     {
                         case AIState.Panic:
-                            if (Helper.Random.Next(50) == 0)
+                            
+
+                            if (Helper.Random.Next(100) == 0 && justChangedDirTime<0)
                             {
+                                justChangedDirTime = 1000;
                                 targetPosition = new Vector2(200f + Helper.Random.Next((gameMap.Width * gameMap.TileWidth) - 200), Position.Y);
                             }
                             break;
@@ -264,11 +270,13 @@ namespace LD28
                     //    }
                     //}
 
-                    if (targetPosition.X > Position.X)
+                    if (targetPosition.X-50 > Position.X)
                         MoveLeftRight(1);
 
-                    if (targetPosition.X < Position.X)
+                    if (targetPosition.X+50 < Position.X)
                         MoveLeftRight(-1);
+
+                    if (Vector2.Distance(targetPosition, Position) < 10f) targetPosition = Position;
 
                     //if (targetPosition.Y - landingHeight < -5 || targetPosition.Y - landingHeight > 5)
                     //{
@@ -319,6 +327,11 @@ namespace LD28
                 if (!walking && !jumping && knockbackTime <= 0)
                 {
                     Animations["walk"].Apply(skeleton, 0f, false);
+                    if (!IsPlayer && State == AIState.Panic)
+                    {
+                        Animations["panic"].Mix(skeleton, animTime, true, 1f);
+                        animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
+                    }
                 }
 
                 if (walking && !jumping && knockbackTime <= 0)
@@ -326,6 +339,7 @@ namespace LD28
                     animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
 
                     Animations["walk"].Mix(skeleton, animTime, true, 0.3f);
+                    if (!IsPlayer && State == AIState.Panic) Animations["panic"].Mix(skeleton, animTime, true, 0.8f);
                 }
 
                 if (pickingUp)

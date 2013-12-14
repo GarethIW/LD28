@@ -46,7 +46,7 @@ namespace LD28
         public Random Rand = new Random();
 
         public Texture2D _texParticles;
-        public Texture2D _texCloud;
+        public List<Texture2D> _texClouds;
 
         public ParticleManager()
         {
@@ -57,7 +57,9 @@ namespace LD28
         public void LoadContent(ContentManager content)
         {
             //_texParticles = content.Load<Texture2D>("particles");
-            _texCloud = content.Load<Texture2D>("cloud");
+            _texClouds = new List<Texture2D>();
+            for(int i=1;i<=10;i++)
+                _texClouds.Add(content.Load<Texture2D>("clouds/cloud-"+i.ToString("00")));
 
             for (int i = 0; i < MAX_PARTICLES; i++)
                 Particles[i] = new Particle();
@@ -72,10 +74,17 @@ namespace LD28
 
                 p.Position += p.Speed + (p.Type== ParticleType.Cloud?new Vector2((200f* (planeRot)),0f):Vector2.Zero);
 
-                if (p.Life <= 0)
+                if (p.Type != ParticleType.Cloud)
                 {
-                    p.Alpha -= 0.01f;
-                    if (p.Alpha < 0.05f) p.Active = false;
+                    if (p.Life <= 0)
+                    {
+                        p.Alpha -= 0.01f;
+                        if (p.Alpha < 0.05f) p.Active = false;
+                    }
+                }
+                else
+                {
+                    if (p.Position.X < -1200f) p.Active = false;
                 }
 
             }
@@ -101,15 +110,15 @@ namespace LD28
                 if (!p.Active)
                 {
                     p.Type = type;
-                    p.Tex = (type == ParticleType.Cloud) ? _texCloud : _texParticles;
+                    p.Tex = (type == ParticleType.Cloud) ? _texClouds[Helper.Random.Next(10)] : _texParticles;
                     p.Position = spawnPos;
                     p.Speed = speed;
                     p.Life = life;
                     p.ZIndex = zindex;
-                    p.Scale = 0.3333f + (zindex / 3f);
+                    p.Scale = 0.5f+(0.3333f + (zindex / 3f));
                     p.AffectedByGravity = affectedbygravity;
-                    p.SourceRect = sourcerect;
-                    p.Alpha = p.Scale;
+                    p.SourceRect = (type == ParticleType.Cloud) ?new Rectangle(0,0,p.Tex.Width,p.Tex.Height):sourcerect;
+                    p.Alpha = 0.3333f + (zindex / 3f);
                     p.Active = true;
                     //p.RotationSpeed = rot;
                     p.Color = col;

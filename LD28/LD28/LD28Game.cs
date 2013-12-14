@@ -29,6 +29,9 @@ namespace LD28
         ParticleManager particleManager;
         EnemyManager enemyManager;
 
+        SoundEffectInstance sfxEngine;
+        SoundEffectInstance sfxPanic;
+
         KeyboardState lks;
 
         float planeRot = 0f;
@@ -64,6 +67,9 @@ namespace LD28
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            sfxEngine = Content.Load<SoundEffect>("sfx/engine").CreateInstance();
+            sfxPanic = Content.Load<SoundEffect>("sfx/panic").CreateInstance();
+
             gameMap = Content.Load<Map>("planemap");
             gameCamera = new Camera(GraphicsDevice.Viewport, gameMap);
 
@@ -80,6 +86,13 @@ namespace LD28
             pilot.LoadContent(Content, GraphicsDevice);
 
             gameCamera.Position = pilot.Position;
+
+            sfxEngine.IsLooped = true;
+            sfxPanic.IsLooped = true;
+            sfxPanic.Volume = 0.2f;
+            sfxEngine.Play();
+            sfxPanic.Play();
+
         }
 
         /// <summary>
@@ -109,7 +122,7 @@ namespace LD28
                 if (cks.IsKeyDown(Keys.Left)) pilot.MoveLeftRight(-1);
                 if (cks.IsKeyDown(Keys.Right)) pilot.MoveLeftRight(1);
 
-                if (Helper.Random.Next(20) == 0)
+                if (Helper.Random.Next(10) == 0)
                 {
                     float zindex = Helper.RandomFloat(0f,1f);
                     particleManager.Add(ParticleType.Cloud,
@@ -119,12 +132,10 @@ namespace LD28
                 }
 
                 if (Helper.Random.Next(200) == 0) gameCamera.Shake(Helper.Random.NextDouble() * 1000, Helper.RandomFloat(10f));
-                if (Helper.Random.Next(400) == 0)
-                {
+                if (Helper.Random.Next(100) == 0)
+                    if (planeRotTarget >= 0f) planeRotTarget = Helper.RandomFloat(-0.3f, 0f);
+                if (Helper.Random.Next(500) == 0)
                     if (planeRotTarget < 0f) planeRotTarget = 0f;
-                    else planeRotTarget = Helper.RandomFloat(-0.2f, 0f);
-                }
-
                
                 planeRot = (float)MathHelper.Lerp(planeRot, planeRotTarget, 0.01f);
                 gameCamera.Rotation = planeRot;
@@ -138,6 +149,8 @@ namespace LD28
                 gameCamera.Update(gameTime);
 
                 particleManager.Update(gameTime, gameMap, planeRot);
+
+                sfxEngine.Pitch = MathHelper.Clamp(-0.5f+((-planeRot) * 8f),-1f,1f);
             }
 
             lks = cks;
