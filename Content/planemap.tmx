@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="60" height="8" tilewidth="100" tileheight="100">
+ <tileset firstgid="1" name="PlaneInner-Template1200" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Template1200.png" width="1200" height="600"/>
+ </tileset>
+ <layer name="internal" width="60" height="8">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+XK2VZBAQBA0YsMRYgGpRQyFKVR0iii//8iu4ce+4B771lrv50giFcJkqTYIE2GLDk22SJPIUT/f21TpESZHSpU2WWPfQ6ohfj/65Aj6hxzQoNTzmjSos15yP/fOnTp0eeCSwYMueKaETcR+G+5454HHhnzxIRnprzwGoH/jXc++GTGF3MWfLNkxU/I/zi2Bo6umDmABwAA
+  </data>
+ </layer>
+</map>

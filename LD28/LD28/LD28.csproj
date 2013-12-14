@@ -71,8 +71,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dude.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="Hero.cs" />
+    <Compile Include="ParticleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="LD28Game.cs" />

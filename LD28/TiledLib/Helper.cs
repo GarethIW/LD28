@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace LD28
+namespace TiledLib
 {
     public static class Helper
     {

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using TiledLib;
 
 namespace LD28
 {
@@ -18,6 +19,19 @@ namespace LD28
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        Dude pilot;
+
+        Map gameMap;
+
+        Camera gameCamera;
+
+        ParticleManager particleManager;
+
+        KeyboardState lks;
+
+        float planeRot = 0f;
+        float planeRotTarget;
 
         public LD28Game()
         {
@@ -33,7 +47,9 @@ namespace LD28
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -47,7 +63,18 @@ namespace LD28
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            gameMap = Content.Load<Map>("planemap");
+            gameCamera = new Camera(GraphicsDevice.Viewport, gameMap);
+
+            particleManager = new ParticleManager();
+            particleManager.LoadContent(Content);
+
+            //pilot = new Dude(new Vector2(100,100), true);
+            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 300f, 640f), true);
+            pilot.Scale = 2f;
+            pilot.LoadContent(Content, GraphicsDevice);
+
+            gameCamera.Position = pilot.Position;
         }
 
         /// <summary>
@@ -66,11 +93,46 @@ namespace LD28
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState cks = Keyboard.GetState();
+
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (cks.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            // TODO: Add your update logic here
+            if (this.IsActive)
+            {
+                if (cks.IsKeyDown(Keys.Left)) pilot.MoveLeftRight(-1);
+                if (cks.IsKeyDown(Keys.Right)) pilot.MoveLeftRight(1);
+
+                if (Helper.Random.Next(50) == 0)
+                {
+                    float zindex = Helper.RandomFloat(0f,1f);
+                    particleManager.Add(ParticleType.Cloud,
+                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width/2), Helper.RandomFloat(-50f, GraphicsDevice.Viewport.Height)),
+                                        new Vector2(-(zindex * 20f), -0.1f + planeRot),
+                                        20000f * (1f-zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
+                }
+
+                if (Helper.Random.Next(200) == 0) gameCamera.Shake(Helper.Random.NextDouble() * 1000, Helper.RandomFloat(10f));
+                if (Helper.Random.Next(400) == 0)
+                {
+                    if (planeRotTarget < 0f) planeRotTarget = 0f;
+                    else planeRotTarget = Helper.RandomFloat(-0.2f, 0f);
+                }
+
+               
+                planeRot = (float)MathHelper.Lerp(planeRot, planeRotTarget, 0.01f);
+                gameCamera.Rotation = planeRot;
+             
+
+                pilot.Update(gameTime, gameMap, planeRot);
+                gameCamera.Target = pilot.Position;// -new Vector2(GraphicsDevice.Viewport.Width / 2, 550f);
+                gameCamera.Update(gameTime);
+
+                particleManager.Update(gameTime, gameMap);
+            }
+
+            lks = cks;
 
             base.Update(gameTime);
         }
@@ -83,7 +145,16 @@ namespace LD28
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera,0f,0.9f);
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, gameCamera.CameraMatrix);
+            gameMap.DrawLayer(spriteBatch, "internal", gameCamera);
+            spriteBatch.End();
+
+            pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
+
+            //particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0.901f, 1f);
+
 
             base.Draw(gameTime);
         }

@@ -1,0 +1,95 @@
+dude.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+laserpistol
+  rotate: false
+  xy: 54, 206
+  size: 46, 28
+  orig: 60, 38
+  offset: 7, 5
+  index: -1
+fistweap1
+  rotate: false
+  xy: 2, 204
+  size: 50, 31
+  orig: 50, 31
+  offset: 0, 0
+  index: -1
+_0000_Head
+  rotate: false
+  xy: 71, 115
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+axe
+  rotate: false
+  xy: 2, 2
+  size: 77, 77
+  orig: 77, 77
+  offset: 0, 0
+  index: -1
+_0004_Foot-Right
+  rotate: false
+  xy: 81, 52
+  size: 27, 11
+  orig: 27, 11
+  offset: 0, 0
+  index: -1
+_0005_Foot-Left
+  rotate: false
+  xy: 81, 52
+  size: 27, 11
+  orig: 27, 11
+  offset: 0, 0
+  index: -1
+_0007_Leg-Left
+  rotate: false
+  xy: 81, 65
+  size: 20, 48
+  orig: 20, 48
+  offset: 0, 0
+  index: -1
+_0006_Leg-Right
+  rotate: false
+  xy: 81, 65
+  size: 20, 48
+  orig: 20, 48
+  offset: 0, 0
+  index: -1
+_0003_Torso
+  rotate: false
+  xy: 2, 81
+  size: 67, 68
+  orig: 67, 68
+  offset: 0, 0
+  index: -1
+fistweap2
+  rotate: false
+  xy: 2, 171
+  size: 50, 31
+  orig: 50, 31
+  offset: 0, 0
+  index: -1
+_0001_Arm-Lower
+  rotate: false
+  xy: 54, 176
+  size: 47, 28
+  orig: 47, 28
+  offset: 0, 0
+  index: -1
+_0002_Arm-Upper
+  rotate: false
+  xy: 81, 2
+  size: 29, 48
+  orig: 29, 48
+  offset: 0, 0
+  index: -1
+crowbar
+  rotate: false
+  xy: 2, 151
+  size: 54, 18
+  orig: 60, 26
+  offset: 3, 3
+  index: -1
