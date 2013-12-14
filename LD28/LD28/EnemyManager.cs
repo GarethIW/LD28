@@ -63,7 +63,7 @@ namespace LD28
 
         public void Draw(GraphicsDevice gd, SpriteBatch sb, Camera gameCamera, float minY, float maxY)
         {
-            foreach (Dude r in Enemies)
+            foreach (Dude r in Enemies.OrderBy(en=>en.HasParachute))
             {
                 //if(r.Position.Y>=minY && r.Position.Y<maxY)
                     r.Draw(gd,sb,gameCamera);
@@ -74,44 +74,50 @@ namespace LD28
         {
             //int numSpawned = 0;
             // Left or right side?
-
+            Dude d;
             foreach (MapObject o in ((MapObjectLayer)gameMap.GetLayer("spawns")).Objects)
             {
-                Dude d = new Dude(new Vector2(o.Location.Center.X, o.Location.Bottom), false);
+                d = new Dude(new Vector2(o.Location.Center.X, o.Location.Bottom), false);
                 d.LoadContent(skeletonRenderer, AtlasDict["dude"], JsonDict["dude"]);
                 d.faceDir = 1;
                 d.Scale = 2f;
                 Enemies.Add(d);
             }
 
+            d = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 280f, 605f), false);
+            d.Tint = Color.Navy;
+            d.faceDir = 1;
+            d.Scale = 2f;
+            d.LoadContent(skeletonRenderer, AtlasDict["dude"], JsonDict["dude"]);
+            d.State = AIState.GoingForDoor;
+
+          
+            Enemies.Add(d);
         }
 
-        //public bool CheckAttack(Vector2 pos, int faceDir, float power, float maxDist, int maxHits, Robot gameHero)
-        //{
-        //    float mindist = 10000f;
-        //    Robot target = null;
-        //    int numHits = 0;
-            
+        public bool CheckAttack(Vector2 pos, int faceDir, float power, float maxDist, int maxHits, Dude gameHero)
+        {
+            float mindist = 10000f;
+            int numHits = 0;
 
-        //    foreach (Robot r in Enemies)
-        //    {
-        //        if ((r.Position - pos).Length() < mindist && (r.Position - pos).Length()<maxDist && r.Active)
-        //        {
-        //            if ((faceDir == 1 && r.Position.X > pos.X) || (faceDir == -1 && r.Position.X < pos.X))
-        //            {
-        //                if (r.Position.Y > pos.Y - 30f && r.Position.Y < pos.Y + 30f)
-        //                {
-        //                    numHits++;
-        //                    if(numHits<=maxHits)
-        //                        r.DoHit(pos, power, faceDir, gameHero);
-        //                    mindist = (r.Position - pos).Length();
-        //                }
-        //            }
-        //        }
-        //    }
+            foreach (Dude r in Enemies.OrderByDescending(en => en.HasParachute))
+            {
+                if ((r.Position - pos).Length() < mindist && (r.Position - pos).Length() < maxDist && r.Active && r.knockbackTime<=0)
+                {
+                    if ((faceDir == 1 && r.Position.X > pos.X) || (faceDir == -1 && r.Position.X < pos.X))
+                    {
+                        
+                        numHits++;
+                        if (numHits <= maxHits)
+                            r.DoHit(pos, power, faceDir, gameHero);
+                        mindist = (r.Position - pos).Length();
+                        
+                    }
+                }
+            }
 
-        //    return (numHits > 0);
-        //}
+            return (numHits > 0);
+        }
 
         
     }

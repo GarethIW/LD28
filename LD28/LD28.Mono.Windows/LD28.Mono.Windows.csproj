@@ -44,11 +44,20 @@
     <Compile Include="..\LD28\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
+    <Compile Include="..\LD28\Item.cs">
+      <Link>Item.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ItemManager.cs">
+      <Link>ItemManager.cs</Link>
+    </Compile>
     <Compile Include="..\LD28\LD28Game.cs">
       <Link>LD28Game.cs</Link>
     </Compile>
     <Compile Include="..\LD28\ParticleManager.cs">
       <Link>ParticleManager.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Speechbubble.cs">
+      <Link>Speechbubble.cs</Link>
     </Compile>
     <Compile Include="..\LD28\Spine\Animation.cs">
       <Link>Spine\Animation.cs</Link>

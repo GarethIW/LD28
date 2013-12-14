@@ -11,7 +11,6 @@
 	{ "name": "head", "parent": "torso", "length": 41.99, "x": 13, "y": 24, "rotation": 90.01 },
 	{ "name": "arm-back-lower", "parent": "arm-back-upper", "length": 32.91, "x": 44.19, "y": -1.07, "rotation": 92.85 },
 	{ "name": "arm-lower", "parent": "arm-upper", "length": 32.91, "x": 44.19, "y": -1.07, "rotation": 92.85 },
-	{ "name": "fist", "parent": "arm-lower", "length": 30.35, "x": 0.55, "y": 0.28, "rotation": -1.35 },
 	{ "name": "melee-hand", "parent": "arm-lower", "length": 18.22, "x": 32.19, "y": 0.13, "rotation": 46.15 },
 	{ "name": "projectile-hand", "parent": "arm-lower", "length": 15.77, "x": 33.06, "y": 0.77, "rotation": 47.12 }
 ],
@@ -24,11 +23,11 @@
 	{ "name": "foot-right", "bone": "foot-right", "attachment": "_0004_Foot-Right" },
 	{ "name": "torso", "bone": "torso", "attachment": "_0003_Torso" },
 	{ "name": "head", "bone": "head", "attachment": "_0000_Head" },
+	{ "name": "chute", "bone": "torso", "attachment": "chute" },
 	{ "name": "arm-upper", "bone": "arm-upper", "attachment": "_0002_Arm-Upper" },
 	{ "name": "arm-lower", "bone": "arm-lower", "attachment": "_0001_Arm-Lower" },
-	{ "name": "melee-item", "bone": "melee-hand", "attachment": "axe" },
-	{ "name": "projectile-item", "bone": "projectile-hand" },
-	{ "name": "fist-item", "bone": "fist", "attachment": "fistweap2" }
+	{ "name": "melee-item", "bone": "melee-hand" },
+	{ "name": "projectile-item", "bone": "projectile-hand" }
 ],
 "skins": {
 	"default": {
@@ -44,9 +43,8 @@
 		"arm-upper": {
 			"_0002_Arm-Upper": { "x": 25.16, "y": 0.17, "rotation": 73.16, "width": 29, "height": 48 }
 		},
-		"fist-item": {
-			"fistweap1": { "x": 26.93, "y": 1.88, "rotation": -2.98, "width": 50, "height": 31 },
-			"fistweap2": { "x": 26.89, "y": 1.84, "rotation": -2.98, "width": 50, "height": 31 }
+		"chute": {
+			"chute": { "x": -40.8, "y": 4.08, "scaleX": -1, "width": 25, "height": 50 }
 		},
 		"foot-left": {
 			"_0005_Foot-Left": { "x": 10.64, "rotation": -0.45, "width": 27, "height": 11 }
@@ -64,7 +62,6 @@
 			"_0006_Leg-Right": { "x": 18.97, "y": 0.51, "rotation": 90, "width": 20, "height": 48 }
 		},
 		"melee-item": {
-			"axe": { "x": 32.24, "y": 3.98, "rotation": -81.44, "width": 77, "height": 77 },
 			"crowbar": { "x": 18.01, "y": -2.28, "rotation": 168.07, "width": 60, "height": 26 }
 		},
 		"projectile-item": {
@@ -139,6 +136,20 @@
 					{ "time": 0, "angle": -71.97 },
 					{ "time": 0.1666, "angle": -60.27 },
 					{ "time": 0.3333, "angle": -71.97 }
+				]
+			},
+			"arm-back-upper": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0, "curve": "stepped" },
+					{ "time": 0.3333, "angle": 0 }
+				]
+			},
+			"arm-back-lower": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0, "curve": "stepped" },
+					{ "time": 0.3333, "angle": 0 }
 				]
 			}
 		}
@@ -368,6 +379,18 @@
 					{ "time": 0, "angle": 0 },
 					{ "time": 0.1666, "angle": 85.04 }
 				]
+			},
+			"arm-back-upper": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0 }
+				]
+			},
+			"arm-back-lower": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0 }
+				]
 			}
 		}
 	},
@@ -408,6 +431,18 @@
 					{ "time": 0, "angle": 0 },
 					{ "time": 0.1, "angle": 7.59 },
 					{ "time": 0.1666, "angle": 28.93 }
+				]
+			},
+			"arm-back-upper": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0 }
+				]
+			},
+			"arm-back-lower": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.1666, "angle": 0 }
 				]
 			}
 		}
@@ -685,6 +720,18 @@
 				]
 			},
 			"projectile-hand": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 1.3333, "angle": 0 }
+				]
+			},
+			"arm-back-upper": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 1.3333, "angle": 0 }
+				]
+			},
+			"arm-back-lower": {
 				"rotate": [
 					{ "time": 0, "angle": 0, "curve": "stepped" },
 					{ "time": 1.3333, "angle": 0 }

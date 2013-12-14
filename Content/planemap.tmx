@@ -3,14 +3,16 @@
  <tileset firstgid="1" name="PlaneInner-Seating" tilewidth="100" tileheight="100">
   <image source="PlaneInner-Seating.png" width="1200" height="600"/>
  </tileset>
+ <tileset firstgid="73" name="PlaneInner-FirstClass" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-FirstClass.png" width="1200" height="600"/>
+ </tileset>
  <layer name="internal" width="60" height="8">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+XK2VZBAQBA0YsMRYgGpRQyFKVR0iii//8iu7ce+oF771lrv50giFcJkqTYIE2GLDk22SJPIWT/f21TpESZHSpU2WWPfQ6ohfT/2yFH1DnmhAannNGkRZvzkP+/dejSo88FlwwYcsU1I24i8N9yxz0PPDLmiQnPTHnhNQL/G+988MmML+Ys+GbJip8Q/3FtDTQtUB2ABwAA
+   H4sIAAAAAAAAC+XP2TOVAQDG4VNaSIgWKclSIhWypLK02VKRFK3GTk0RySBxNJIi/7LHzHdxLs65/i7OO/Pc/W7eSCS5doCDpHCIwxzhKKmkcYx0jofYd/KYLp7wlGd008NzenkRNH0J/maQSRYnyCaHk5ziNGfI5WyI/Ute0c8Ar3nDW97xng8MBk00RuzyOMd58rlAARcppIhiSrgUYj/EMCOMMsY4E0wyxUc+BU00jv1dppQrlFHOVSq4xnVuUElViP1nvjDNDF+ZZY5vzPOdhaCJ93dfNTepoZY66rlFA7e5w10aQ+wXWWKZH6zwk1XWgi/r/AqaRH+baKaFe9znAQ95RCtttNMRYr/Bbzb5wxZ/+cc2O/xnN2jiScbtATo7z1mABwAA
   </data>
  </layer>
  <objectgroup color="#a40002" name="spawns" width="60" height="8">
-  <object x="4860" y="513" width="100" height="100"/>
-  <object x="4699" y="511" width="100" height="100"/>
+  <object x="4844" y="511" width="100" height="100"/>
   <object x="4553" y="509" width="100" height="100"/>
   <object x="4249" y="510" width="100" height="100"/>
   <object x="4099" y="514" width="100" height="100"/>
@@ -40,6 +42,5 @@
   <object x="353" y="510" width="100" height="100"/>
   <object x="202" y="512" width="100" height="100"/>
   <object x="3195" y="512" width="100" height="100"/>
-  <object x="4400" y="512" width="100" height="100"/>
  </objectgroup>
 </map>

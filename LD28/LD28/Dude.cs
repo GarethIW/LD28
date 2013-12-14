@@ -15,7 +15,9 @@ namespace LD28
     public enum AIState
     {
         Panic,
-        Attacking,
+        KnockBack,
+        AttackingHero,
+        AttackingOther,
         GoingForParachute,
         GoingForDoor
     }
@@ -34,6 +36,10 @@ namespace LD28
 
         public bool Active = true;
         public bool Dead = false;
+
+        public bool HasParachute = false;
+
+        public int Health = 3;
 
         Vector2 gravity = new Vector2(0f, 0.333f);
 
@@ -54,14 +60,19 @@ namespace LD28
         bool falling = false;
 
         bool punchHeld = false;
+        double punchHeldTime = 0;
+        bool punchReleased = false;
+        double punchReleaseTime = 0;
 
+        public Item Item;
+        public Item ChuteItem;
 
         Vector2 spawnPosition;
 
-        Color tint = Color.White;
+        public Color Tint = Color.White;
 
 
-        double knockbackTime = 0;
+        public double knockbackTime = 0;
         double deadTime = 0;
         double justChangedDirTime = 0;
         float alpha = 1f;
@@ -142,8 +153,11 @@ namespace LD28
             //ItemManager.Instance.Spawn(this);
 
             skeleton.SetAttachment("melee-item", null);
+            skeleton.SetAttachment("chute", null);
 
-            skeleton.FindSlot("fist-item").A = 0f;
+            HasParachute = false;
+
+            //skeleton.FindSlot("fist-item").A = 0f;
         }
 
         public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
@@ -154,14 +168,14 @@ namespace LD28
             SkeletonJson skjson = new SkeletonJson(atlas);
             skeleton = new Skeleton(skjson.readSkeletonData("robo", json));
 
-            tint = new Color(0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f));
-            skeleton.R = tint.ToVector3().X;
-            skeleton.G = tint.ToVector3().Y;
-            skeleton.B = tint.ToVector3().Z;
+            Tint = new Color(0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f));
+            skeleton.R = Tint.ToVector3().X;
+            skeleton.G = Tint.ToVector3().Y;
+            skeleton.B = Tint.ToVector3().Z;
 
             foreach (Slot s in skeleton.Slots)
             {
-                if (s.Data.Name != "melee-item" && s.Data.Name != "projectile-item" && s.Data.Name != "fist-item")
+                if (s.Data.Name != "melee-item" && s.Data.Name != "projectile-item" && s.Data.Name != "chute")
                 {
                     s.Data.R = skeleton.R;
                     s.Data.G = skeleton.G;
@@ -187,149 +201,131 @@ namespace LD28
             skeleton.UpdateWorldTransform();
 
             skeleton.SetAttachment("melee-item", null);
-            skeleton.FindSlot("fist-item").A = 0f;
+            skeleton.SetAttachment("chute", null);
+            //skeleton.FindSlot("fist-item").A = 0f;
+
+            HasParachute = false;
 
             State = AIState.Panic;
         }
 
         public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot)
         {
+            if (HasParachute)
+            {
+                skeleton.SetAttachment("chute", "chute");
+                ChuteItem.Position = Position;
+            }
+            else
+                skeleton.SetAttachment("chute", null);
+
             if (Active)
             {
-                float attackRange = 100f;
+                float attackRange = 200f;
                 //if (Item != null) attackRange = Item.Range;
+
+                
+
+                if(knockbackTime<=0) ItemManager.Instance.CheckChutePickup(this);
+
 
                 if (!IsPlayer)
                 {
+                    Item chute = ItemManager.Instance.Items.Where(it => it.Type == ItemType.Chute).First();
+
                     justChangedDirTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
+
+
                     switch (State)
                     {
                         case AIState.Panic:
-                            
 
-                            if (Helper.Random.Next(100) == 0 && justChangedDirTime<0)
+                            
+                            
+                            if (Vector2.Distance(chute.Position, Position) < 300f)
+                            {
+                                State = AIState.GoingForParachute;
+                            }
+
+                            if (Helper.Random.Next(500) == 0) State = AIState.GoingForParachute;
+                          
+
+                            if (Helper.Random.Next(100) == 0 && justChangedDirTime < 0)
                             {
                                 justChangedDirTime = 1000;
                                 targetPosition = new Vector2(200f + Helper.Random.Next((gameMap.Width * gameMap.TileWidth) - 200), Position.Y);
                             }
+                            if (targetPosition.X - 50 > Position.X)
+                                MoveLeftRight(1);
+                            if (targetPosition.X + 50 < Position.X)
+                                MoveLeftRight(-1);
                             break;
+
+                        case AIState.AttackingOther:
+                        case AIState.AttackingHero:
+                            punchHeldTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                            if (punchHeldTime > 100)
+                            {
+                                punchReleased = true;
+                                punchHeld = false;
+                                punchHeldTime = 0;
+                            }
+                            break;
+
+                        case AIState.GoingForDoor:
+                            targetPosition = new Vector2(300f, Position.Y);
+                            if (targetPosition.X - 50 > Position.X)
+                                MoveLeftRight(1);
+                            if (targetPosition.X + 50 < Position.X)
+                                MoveLeftRight(-1);
+                            break;
+
+                        case AIState.GoingForParachute:
+                            targetPosition = chute.Position;
+                            if (targetPosition.X - 50 > Position.X)
+                                MoveLeftRight(1);
+                            if (targetPosition.X + 50 < Position.X)
+                                MoveLeftRight(-1);
+                            //if (Helper.Random.Next(500) == 0) State = AIState.Panic;
+                            break;
+      
                     }
 
-                    //if (notMovedTime > 500)
-                    //{
-                    //    if (CheckJump(gameMap, levelSectors, walkableLayers))
-                    //    {
-                    //        notMovedTime = 0;
-                    //        Jump();
-                    //    }
-                    //}
+                    if (State == AIState.GoingForParachute || State == AIState.Panic)
+                    {
 
-                    //if (notMovedTime > 1000)
-                    //{
-                    //    backingOff = true;
-                    //    targetPosition = MoveToRandomPosition(gameMap, levelSectors, walkableLayers);
-                    //}
+                        if (Helper.Random.Next(200) == 0)
+                        {
+                            if (EnemyManager.Instance.Enemies.Where(en => (Vector2.Distance(Position, en.Position) < attackRange) && en!=this && en.Active && en.knockbackTime <= 0).Count() > 0)
+                            {
+                                punchHeld = true;
+                                punchHeldTime = 0;
+                                State = AIState.AttackingOther;
+                            }
+                            if (Vector2.Distance(gameHero.Position, Position) < attackRange)
+                            {
+                                punchHeld = true;
+                                punchHeldTime = 0;
+                                State = AIState.AttackingHero;
+                            }
+                        }
 
-                    //if (!backingOff)
-                    //{
-                    //    targetPosition.X = gameHero.Position.X;
-                    //    targetPosition.Y = gameHero.landingHeight;
-                    //}
-                    //else
-                    //    if (rand.Next(250) == 1) backingOff = false;
+                        if (HasParachute) State = AIState.GoingForDoor;
 
-                    //if (Item == null)
-                    //{
-                    //    Item tryItem = ItemManager.Instance.ClosestItem(this);
-                    //    if (tryItem != null)
-                    //    {
-                    //        if ((Position - tryItem.Position).Length() < 400f)
-                    //        {
-                    //            if (rand.Next(100) == 1)
-                    //                targetPosition = tryItem.Position;
+                    }
 
-                    //            if (tryItem.Position.X > Position.X - 75f && tryItem.Position.X < Position.X + 75f)
-                    //            {
-                    //                if (tryItem.Position.Y > landingHeight - 30f && tryItem.Position.Y < landingHeight + 30f)
-                    //                {
-                    //                    if (rand.Next(10) == 1)
-                    //                        Pickup();
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //if ((new Vector2(Position.X, landingHeight) - targetPosition).Length() < 100f)
-                    //{
-                    //    if (rand.Next(50) == 1)
-                    //    {
-                    //        backingOff = true;
-                    //        targetPosition.X = (gameHero.Position.X - 300f) + (600f * (float)rand.NextDouble());
-                    //        targetPosition.Y = (gameHero.landingHeight - 100f) + (200f * (float)rand.NextDouble());
-                    //    }
-                    //}
-
-                    if (targetPosition.X-50 > Position.X)
-                        MoveLeftRight(1);
-
-                    if (targetPosition.X+50 < Position.X)
-                        MoveLeftRight(-1);
-
-                    if (Vector2.Distance(targetPosition, Position) < 10f) targetPosition = Position;
-
-                    //if (targetPosition.Y - landingHeight < -5 || targetPosition.Y - landingHeight > 5)
-                    //{
-                    //    if (targetPosition.Y > landingHeight)
-                    //        MoveUpDown(1);
-
-                    //    if (targetPosition.Y < landingHeight)
-                    //        MoveUpDown(-1);
-                    //}
-
-                    //if (gameHero.Position.X > Position.X) faceDir = 1; else faceDir = -1;
-
-                    // Attacking
-                    //if (!AIchargingAttack && rand.Next(100) == 1)
-                    //{
-                    //    AIchargingAttack = true;
-                    //}
-
-                    //if (AIchargingAttack) Attack(true);
-                    //else Attack(false);
-
-
-
-                    //if ((gameHero.Position - Position).Length() < attackRange && gameHero.Active)
-                    //{
-                    //    if ((faceDir == 1 && gameHero.Position.X > Position.X) || (faceDir == -1 && gameHero.Position.X < Position.X))
-                    //    {
-                    //        if (gameHero.Position.Y > Position.Y - 30f && gameHero.Position.Y < Position.Y + 30f)
-                    //        {
-                    //            if (rand.Next(20) == 1)
-                    //            {
-                    //                if (!AIchargingAttack) AIchargingAttack = true;
-                    //                else Attack(false);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    ///////////////
+                    if (knockbackTime<0 && Vector2.Distance(targetPosition, Position) < 10f) targetPosition = Position;
+                   
                 }
 
-                //if ((int)Position.X > furthestX)
-                //{
-                //    furthestX = (int)Position.X;
-                //    Score++;
-                //}
+               
 
                 if (!walking && !jumping && knockbackTime <= 0)
                 {
                     Animations["walk"].Apply(skeleton, 0f, false);
                     if (!IsPlayer && State == AIState.Panic)
                     {
-                        Animations["panic"].Mix(skeleton, animTime, true, 1f);
+                        Animations["panic"].Mix(skeleton, animTime, true, 0.8f);
                         animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
                     }
                 }
@@ -363,6 +359,16 @@ namespace LD28
 
                 if (knockbackTime > 0)
                 {
+                    if (HasParachute && ChuteItem != null)
+                    {
+                        ChuteItem.InWorld = true;
+                        ChuteItem.DroppedPosition = Position;
+                        ChuteItem.Position = Position + new Vector2(0, -200);
+                        ChuteItem.Speed = new Vector2(0f,0.1f);
+                        ChuteItem = null;
+                        HasParachute = false;
+                    }
+
                     knockbackTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
 
                     animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
@@ -374,13 +380,15 @@ namespace LD28
                     if (Speed.X > 0) Speed.X -= 0.1f;
                     else if (Speed.X < 0) Speed.X += 0.1f;
 
-                    if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f,0f,1f);
-                    if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f,-0.9f,0.9f);
+                    if (knockbackTime < 100) State = AIState.Panic;
+                    //if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f,0f,1f);
+                   // if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f,-0.9f,0.9f);
 
                     //if (Speed.X > -0.1f && Speed.X < 0.1f) knockbackTime = 0;
                 }
                 else
                 {
+
                     
 
                     if (jumping)
@@ -395,83 +403,86 @@ namespace LD28
 
                     //if (!jumping && !falling) landingHeight = Position.Y;
 
-                    //if (punchHeld && !punchReleased)
-                    //{
-                        
-                    //    if (Item == null)
-                    //    {
-                    //        attackCharge += 0.25f * (IsPlayer?2f:1f);
-                    //        Animations["punch-hold"].Apply(skeleton, 1f, false);
+                    if (punchHeld)
+                    {
 
-                    //        fistSound.Volume = MathHelper.Clamp((0.2f / 50f) * (attackCharge), 0f,1f);
-                    //        fistSound.Pitch = MathHelper.Clamp(-1f + ((2f / 50f) * (attackCharge)), -0.9f,0.9f);
-                    //    }
-                    //    else if (Item.Type == ItemType.Melee)
-                    //    {
-                    //        attackCharge += 0.25f;
-                    //        Animations["punch-hold"].Apply(skeleton, 1f, false);
+                        if (Item == null)
+                        {
+                            
+                            Animations["punch-hold"].Apply(skeleton, 1f, false);
+
+                            
+                        }
+                        //else if (Item.Type == ItemType.Melee)
+                        //{
+                           
+                        //    Animations["punch-hold"].Apply(skeleton, 1f, false);
 
 
-                    //    }
-                    //    else if (Item.Type == ItemType.Projectile)
-                    //    {
-                    //        attackCharge += 0.25f;
-                    //        Animations["punch-release"].Apply(skeleton, 1f, false);
-                    //        if(IsPlayer || rand.Next(50)==0)
-                    //            Item.Use(faceDir, attackCharge, gameHero);
-                    //    }
-
-                    //    if(rand.Next(51 - (int)attackCharge)==0 && Item==null)
-                    //        ParticleManager.Instance.Add(ParticleType.Standard, (Position - new Vector2(faceDir * 50, 75)) + (new Vector2(-15f + ((float)rand.NextDouble() * 30f), -10f + ((float)rand.NextDouble() * 20f))), (landingHeight - 10f) + ((float)rand.NextDouble() * 20f), new Vector2(-0.5f + (float)rand.NextDouble() * 1f, -0.5f + (float)rand.NextDouble() * 1f), 0f, true, new Rectangle(0, 0, 2, 2), 0f, Color.DeepSkyBlue);
+                        //}
+                        //else if (Item.Type == ItemType.Projectile)
+                        //{
+                        //    attackCharge += 0.25f;
+                        //    Animations["punch-release"].Apply(skeleton, 1f, false);
+                        //    if (IsPlayer || rand.Next(50) == 0)
+                        //        Item.Use(faceDir, attackCharge, gameHero);
+                        //}
 
                         
-                    //}
-                    //else if (punchReleased)
-                    //{
-                    //    AIchargingAttack = false;
 
-                    //    if (Item == null)
-                    //    {
-                    //        if (punchReleaseTime == 0)
-                    //        {
-                    //            AudioController.PlaySFX("swipe",0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f),0f);
-                    //            if (IsPlayer)
-                    //                EnemyManager.Instance.CheckAttack(Position, faceDir, attackCharge, attackRange, 1, gameHero);
-                    //            else
-                    //                if ((Position - gameHero.Position).Length() < attackRange) gameHero.DoHit(Position, attackCharge, faceDir, gameHero);
-                    //        }
-                    //    }
-                    //    else if (Item.Type == ItemType.Melee)
-                    //    {
-                    //        if (punchReleaseTime == 0)
-                    //        {
-                    //            AudioController.PlaySFX("swipe",0.5f,-0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
-                    //            Item.Use(faceDir, attackCharge, gameHero);
+                    }
+                    else if (punchReleased)
+                    {
+
+                        if (Item == null)
+                        {
+                            if (punchReleaseTime == 0)
+                            {
+                                //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
+                                if (IsPlayer)
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                else
+                                {
+                                    switch (State)
+                                    {
+                                        case AIState.AttackingHero:
+                                            if ((Position - gameHero.Position).Length() < attackRange) gameHero.DoHit(Position, 1f, faceDir, gameHero);
+                                            State = AIState.Panic;
+                                            break;
+                                        case AIState.AttackingOther:
+                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                            State = AIState.Panic;
+                                            break;
+                                    }
+                                }
                                 
-                    //        }
-                    //    }
-                    //    else if (Item.Type == ItemType.Projectile)
-                    //    {
-                    //        punchReleaseTime = Item.Cooldown;
-                    //    }
+                            }
+                        }
+                        //else if (Item.Type == ItemType.Melee)
+                        //{
+                        //    if (punchReleaseTime == 0)
+                        //    {
+                        //        AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
+                        //        Item.Use(faceDir, attackCharge, gameHero);
 
-                    //    punchReleaseTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    //    if (punchReleaseTime >= (Item!=null?Item.Cooldown:200))
-                    //    {
-                    //        punchReleaseTime = 0;
-                    //        punchReleased = false;
-                    //        AIchargingAttack = false;
-                    //        Animations["punch-release"].Apply(skeleton, 0f, false);
-                    //    }
+                        //    }
+                        //}
+                        //else if (Item.Type == ItemType.Projectile)
+                        //{
+                        //    punchReleaseTime = Item.Cooldown;
+                        //}
 
-                    //    Animations["punch-release"].Apply(skeleton, 1f, false);
+                        punchReleaseTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if (punchReleaseTime >= 200)
+                        {
+                            punchReleaseTime = 0;
+                            punchReleased = false;
+                            Animations["punch-release"].Apply(skeleton, 0f, false);
+                        }
 
+                        Animations["punch-release"].Apply(skeleton, 1f, false);
 
-                    //    if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f, 0f, 1f);
-                    //    if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f, -0.9f, 0.9f);
-
-                    //    attackCharge = 0f;
-                    //}
+                    }
 
                     //attackCharge = MathHelper.Clamp(attackCharge, 0f, 50f);
 
@@ -491,6 +502,7 @@ namespace LD28
                 //{
                 //    if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f, 0f, 1f);
                 //    if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f, -0.9f, 0.9f);
+
 
                 //    if (Item.Type == ItemType.Melee)
                 //    {
@@ -519,39 +531,46 @@ namespace LD28
                 //}
 
                 //pushingUp = false;
+               // punchHeld = false;
             }
 
             if (!Active)
             {
-                Active = false;
+                if (HasParachute && ChuteItem != null)
+                {
+                    ChuteItem.InWorld = true;
+                    ChuteItem.DroppedPosition = Position;
+                    ChuteItem.Position = Position + new Vector2(0, -200);
+                    ChuteItem.Speed = new Vector2(0f, 0.1f);
+                    ChuteItem = null;
+                    HasParachute = false;
+                }
 
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
                 Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
 
-                deadTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (deadTime > 0 && deadTime<1000)
+                deadTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                //if (deadTime > 0 && deadTime<1000)
+                //{
+                //    //CheckCollision(gameTime, gameMap, levelSectors, walkableLayers, gameHero.Sector);
+                //    Position.X += ((float)-faceDir) * (0.001f * (1000f - (float)deadTime));
+                //}
+                //if (deadTime > 2000 && alpha > 0f)
+                //{
+                //    alpha -= 0.025f;
+                //    alpha = MathHelper.Clamp(alpha, 0f, 1f);
+                //}
+
+                //if (skeleton.FindSlot("fist-item").A > 0f) skeleton.FindSlot("fist-item").A -= 0.1f;
+
+                if (deadTime <= 0)
                 {
-                    //CheckCollision(gameTime, gameMap, levelSectors, walkableLayers, gameHero.Sector);
-                    Position.X += ((float)-faceDir) * (0.001f * (1000f - (float)deadTime));
-                }
-                if (deadTime > 2000 && alpha > 0f)
-                {
-                    alpha -= 0.025f;
-                    alpha = MathHelper.Clamp(alpha, 0f, 1f);
+                    Health = 3;
+                    Active = true;
+                    State = AIState.Panic;
+                    deadTime = 0;
                 }
 
-                if (skeleton.FindSlot("fist-item").A > 0f) skeleton.FindSlot("fist-item").A -= 0.1f;
-
-                if (deadTime >= 3000)
-                {
-                    Dead = true;
-
-                    fistSound.Stop();
-                    fistSound.Dispose();
-                }
-
-                if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f, 0f, 1f);
-                if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch -= 0.1f, -0.9f, 0.9f);
             }
 
             if (falling)
@@ -576,7 +595,7 @@ namespace LD28
 
             collisionRect.Location = new Point((int)Position.X - (collisionRect.Width / 2), (int)Position.Y - (collisionRect.Height));
 
-            Position.X -= (planeRot * 5f);
+            Position.X -= (planeRot * 10f);
 
             Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
             Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
@@ -670,7 +689,11 @@ namespace LD28
         {
             if (knockbackTime > 0 || pickingUp) return;
 
-            //if (punchHeld && !p) punchReleased = true;
+            if (punchHeld && !p)
+            {
+                punchReleased = true;
+                punchReleaseTime = 0;
+            }
             punchHeld = p;
         }
 
@@ -902,65 +925,81 @@ namespace LD28
         //    return false;
         //}
 
-        //internal void DoHit(Vector2 pos, float power, int face, Robot gameHero)
-        //{
-        //    if (knockbackTime > 0) return;
+        internal void DoHit(Vector2 pos, float power, int face, Dude gameHero)
+        {
+            if (knockbackTime > 0 || !Active) return;
 
-        //    if (power > 5f && knockbackTime <= 0)
-        //    {
-        //        knockbackTime = (double)((power * 100f) / 2f);
-        //        if (IsPlayer) knockbackTime *= 0.5;
-        //        Speed.X = 10f * (float)face;
+            if (Health > 1)
+            {
 
-        //        if (jumping)
-        //        {
-        //            jumping = false;
-        //            falling = true;
-        //        }
-        //    }
+                if (knockbackTime <= 0)
+                {
+                    knockbackTime = 1000f;
+                    faceDir = -face;
+                    if (IsPlayer) knockbackTime *= 0.5;
+                    Speed.X = 15f * (float)face;
 
-        //    if (IsPlayer)
-        //        Health -= (power / 2f);
-        //    else
-        //    {
-        //        gameHero.Score += (int)power;
-        //        Health -= power;
-        //    }
+                    if (jumping)
+                    {
+                        jumping = false;
+                        falling = true;
+                    }
+                }
+                Health--;
+            }
+            else
+            {
+                //knockbackTime = 3000f;
+                //knockbackTime = 1000f;
+                deadTime = Helper.Random.NextDouble()*5000;
+                faceDir = -face;
+                if (IsPlayer) knockbackTime *= 0.5;
+                Speed.X = 15f * (float)face;
+                Active = false;
+            }
 
-        //    AudioController.PlaySFX("hit" + (1 + rand.Next(3)).ToString(), 1f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
-        //    AudioController.PlaySFX("thud", 0.8f,0f,0f);
+            //if (IsPlayer)
+            //    Health -= (power / 2f);
+            //else
+            //{
+            //    gameHero.Score += (int)power;
+            //    Health -= power;
+            //}
 
-        //    ParticleManager.Instance.AddHurt(Position + new Vector2(0,-75f), new Vector2((power/5f) * face,0f), landingHeight, tint);
+            //AudioController.PlaySFX("hit" + (1 + rand.Next(3)).ToString(), 1f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
+            //AudioController.PlaySFX("thud", 0.8f, 0f, 0f);
 
-        //    AIchargingAttack = false;
-        //    attackCharge = 0f;
+            //ParticleManager.Instance.AddHurt(Position + new Vector2(0, -75f), new Vector2((power / 5f) * face, 0f), landingHeight, tint);
 
-        //    if (Health <= 0)
-        //    {
-        //        AudioController.PlaySFX("powerdown", 0.5f, 0f, 0f);
+            //AIchargingAttack = false;
+            //attackCharge = 0f;
 
-        //        if (Item != null)
-        //        {
-        //            Item.InWorld = true;
-        //            Item.Position = Position + new Vector2(0, -75);
-        //            Item.DroppedPosition = Position;
-        //            Item.Speed.Y = 2f;
-        //            Item = null;
-        //        }
+            //if (Health <= 0)
+            //{
+            //    AudioController.PlaySFX("powerdown", 0.5f, 0f, 0f);
 
-        //        if (!IsPlayer)
-        //        {
-        //            gameHero.Score += 500;
+            //    if (Item != null)
+            //    {
+            //        Item.InWorld = true;
+            //        Item.Position = Position + new Vector2(0, -75);
+            //        Item.DroppedPosition = Position;
+            //        Item.Speed.Y = 2f;
+            //        Item = null;
+            //    }
 
-        //            if ((int)gameHero.Health < 120)
-        //            {
-        //                for (int i = 0; i < ((120 - (int)gameHero.Health)/2) + (rand.Next((120 - (int)gameHero.Health)) / 2); i++)
-        //                {
-        //                    ParticleManager.Instance.Add(ParticleType.Health, Position + new Vector2(0, -75f), (landingHeight - 10f) + ((float)rand.NextDouble() * 20f), new Vector2(-10f + ((float)rand.NextDouble() * 20f), 0), 2000, true, new Rectangle(11, 0, 15, 8), (float)rand.NextDouble() * MathHelper.TwoPi, Color.Red);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+            //    if (!IsPlayer)
+            //    {
+            //        gameHero.Score += 500;
+
+            //        if ((int)gameHero.Health < 120)
+            //        {
+            //            for (int i = 0; i < ((120 - (int)gameHero.Health) / 2) + (rand.Next((120 - (int)gameHero.Health)) / 2); i++)
+            //            {
+            //                ParticleManager.Instance.Add(ParticleType.Health, Position + new Vector2(0, -75f), (landingHeight - 10f) + ((float)rand.NextDouble() * 20f), new Vector2(-10f + ((float)rand.NextDouble() * 20f), 0), 2000, true, new Rectangle(11, 0, 15, 8), (float)rand.NextDouble() * MathHelper.TwoPi, Color.Red);
+            //            }
+            //        }
+            //    }
+            //}
+        }
     }
 }
