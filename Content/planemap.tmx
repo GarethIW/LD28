@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="60" height="8" tilewidth="100" tileheight="100">
- <tileset firstgid="1" name="PlaneInner-Template1200" tilewidth="100" tileheight="100">
-  <image source="PlaneInner-Template1200.png" width="1200" height="600"/>
+ <tileset firstgid="1" name="PlaneInner-Seating" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Seating.png" width="1200" height="600"/>
  </tileset>
  <layer name="internal" width="60" height="8">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+XK2VZBAQBA0YsMRYgGpRQyFKVR0iii//8iu4ce+4B771lrv50giFcJkqTYIE2GLDk22SJPIUT/f21TpESZHSpU2WWPfQ6ohfj/65Aj6hxzQoNTzmjSos15yP/fOnTp0eeCSwYMueKaETcR+G+5454HHhnzxIRnprzwGoH/jXc++GTGF3MWfLNkxU/I/zi2Bo6umDmABwAA
+   H4sIAAAAAAAAC+XK2VZBAQBA0YsMRYgGpRQyFKVR0iii//8iu7ce+oF771lrv50giFcJkqTYIE2GLDk22SJPIWT/f21TpESZHSpU2WWPfQ6ohfT/2yFH1DnmhAannNGkRZvzkP+/dejSo88FlwwYcsU1I24i8N9yxz0PPDLmiQnPTHnhNQL/G+988MmML+Ys+GbJip8Q/3FtDTQtUB2ABwAA
   </data>
  </layer>
+ <objectgroup color="#a40002" name="spawns" width="60" height="8">
+  <object x="4860" y="513" width="100" height="100"/>
+  <object x="4699" y="511" width="100" height="100"/>
+  <object x="4553" y="509" width="100" height="100"/>
+  <object x="4249" y="510" width="100" height="100"/>
+  <object x="4099" y="514" width="100" height="100"/>
+  <object x="3951" y="512" width="100" height="100"/>
+  <object x="3801" y="511" width="100" height="100"/>
+  <object x="3652" y="509" width="100" height="100"/>
+  <object x="3501" y="509" width="100" height="100"/>
+  <object x="3351" y="511" width="100" height="100"/>
+  <object x="3048" y="512" width="100" height="100"/>
+  <object x="2752" y="512" width="100" height="100"/>
+  <object x="2902" y="511" width="100" height="100"/>
+  <object x="2599" y="514" width="100" height="100"/>
+  <object x="2451" y="517" width="100" height="100"/>
+  <object x="2300" y="512" width="100" height="100"/>
+  <object x="2148" y="511" width="100" height="100"/>
+  <object x="1999" y="511" width="100" height="100"/>
+  <object x="1850" y="512" width="100" height="100"/>
+  <object x="1701" y="512" width="100" height="100"/>
+  <object x="1546" y="512" width="100" height="100"/>
+  <object x="1401" y="510" width="100" height="100"/>
+  <object x="1249" y="512" width="100" height="100"/>
+  <object x="1099" y="511" width="100" height="100"/>
+  <object x="950" y="514" width="100" height="100"/>
+  <object x="802" y="510" width="100" height="100"/>
+  <object x="652" y="511" width="100" height="100"/>
+  <object x="500" y="513" width="100" height="100"/>
+  <object x="353" y="510" width="100" height="100"/>
+  <object x="202" y="512" width="100" height="100"/>
+  <object x="3195" y="512" width="100" height="100"/>
+  <object x="4400" y="512" width="100" height="100"/>
+ </objectgroup>
 </map>

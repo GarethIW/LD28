@@ -63,14 +63,14 @@ namespace LD28
                 Particles[i] = new Particle();
         }
 
-        public void Update(GameTime gameTime, Map gameMap)
+        public void Update(GameTime gameTime, Map gameMap, float planeRot)
         {
             foreach (Particle p in Particles.Where(part => part.Active))
             {
 
                 p.Life -= gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                p.Position += p.Speed;
+                p.Position += p.Speed + (p.Type== ParticleType.Cloud?new Vector2((200f* (planeRot)),0f):Vector2.Zero);
 
                 if (p.Life <= 0)
                 {

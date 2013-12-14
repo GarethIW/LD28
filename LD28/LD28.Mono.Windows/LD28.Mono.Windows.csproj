@@ -38,11 +38,17 @@
     <Compile Include="..\LD28\Dude.cs">
       <Link>Dude.cs</Link>
     </Compile>
+    <Compile Include="..\LD28\EnemyManager.cs">
+      <Link>EnemyManager.cs</Link>
+    </Compile>
     <Compile Include="..\LD28\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
     <Compile Include="..\LD28\LD28Game.cs">
       <Link>LD28Game.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ParticleManager.cs">
+      <Link>ParticleManager.cs</Link>
     </Compile>
     <Compile Include="..\LD28\Spine\Animation.cs">
       <Link>Spine\Animation.cs</Link>

@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dude.cs" />
+    <Compile Include="EnemyManager.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ParticleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

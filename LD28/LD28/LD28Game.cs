@@ -27,6 +27,7 @@ namespace LD28
         Camera gameCamera;
 
         ParticleManager particleManager;
+        EnemyManager enemyManager;
 
         KeyboardState lks;
 
@@ -69,8 +70,12 @@ namespace LD28
             particleManager = new ParticleManager();
             particleManager.LoadContent(Content);
 
+            enemyManager = new EnemyManager();
+            enemyManager.LoadContent(Content, GraphicsDevice);
+            enemyManager.Spawn(gameMap);
+
             //pilot = new Dude(new Vector2(100,100), true);
-            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 300f, 640f), true);
+            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 300f, 610f), true);
             pilot.Scale = 2f;
             pilot.LoadContent(Content, GraphicsDevice);
 
@@ -104,13 +109,13 @@ namespace LD28
                 if (cks.IsKeyDown(Keys.Left)) pilot.MoveLeftRight(-1);
                 if (cks.IsKeyDown(Keys.Right)) pilot.MoveLeftRight(1);
 
-                if (Helper.Random.Next(50) == 0)
+                if (Helper.Random.Next(20) == 0)
                 {
                     float zindex = Helper.RandomFloat(0f,1f);
                     particleManager.Add(ParticleType.Cloud,
-                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width/2), Helper.RandomFloat(-50f, GraphicsDevice.Viewport.Height)),
-                                        new Vector2(-(zindex * 20f), -0.1f + planeRot),
-                                        20000f * (1f-zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
+                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width/2), Helper.RandomFloat(-50f, GraphicsDevice.Viewport.Height+200f)),
+                                        new Vector2(-zindex * (20f), -0.1f + planeRot),
+                                        30000f * (1f-zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
                 }
 
                 if (Helper.Random.Next(200) == 0) gameCamera.Shake(Helper.Random.NextDouble() * 1000, Helper.RandomFloat(10f));
@@ -125,11 +130,14 @@ namespace LD28
                 gameCamera.Rotation = planeRot;
              
 
-                pilot.Update(gameTime, gameMap, planeRot);
+                pilot.Update(gameTime, gameMap, pilot, planeRot);
+
+                enemyManager.Update(gameTime, gameCamera, gameMap, pilot, planeRot);
+
                 gameCamera.Target = pilot.Position;// -new Vector2(GraphicsDevice.Viewport.Width / 2, 550f);
                 gameCamera.Update(gameTime);
 
-                particleManager.Update(gameTime, gameMap);
+                particleManager.Update(gameTime, gameMap, planeRot);
             }
 
             lks = cks;
@@ -151,6 +159,7 @@ namespace LD28
             gameMap.DrawLayer(spriteBatch, "internal", gameCamera);
             spriteBatch.End();
 
+            enemyManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0f, 0f);
             pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
 
             //particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0.901f, 1f);

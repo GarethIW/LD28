@@ -12,6 +12,14 @@ using TiledLib;
 
 namespace LD28
 {
+    public enum AIState
+    {
+        Panic,
+        Attacking,
+        GoingForParachute,
+        GoingForDoor
+    }
+
     public class Dude
     {
         static Random rand = new Random();
@@ -22,10 +30,6 @@ namespace LD28
         public Vector2 Speed;
         public Vector2 JumpSpeed;
 
-        public int Sector = 0;
-
-        public float landingHeight;
-
         public float Scale = 1f;
 
         public bool Active = true;
@@ -35,13 +39,13 @@ namespace LD28
 
         Rectangle collisionRect = new Rectangle(0, 0, 3, 150);
 
-        Texture2D blankTex;
-
         SkeletonRenderer skeletonRenderer;
         Skeleton skeleton;
         Dictionary<string, Animation> Animations = new Dictionary<string, Animation>();
 
         float animTime;
+
+        public AIState State;
 
         public int faceDir = 1;
 
@@ -50,17 +54,12 @@ namespace LD28
         bool falling = false;
 
         bool punchHeld = false;
-        bool punchReleased = false;
-        double punchReleaseTime = 0;
-        float punchAnimTime = 0;
+
 
         Vector2 spawnPosition;
 
         Color tint = Color.White;
 
-        bool pushingUp = false;
-
-        float attackCharge = 0f;
 
         double knockbackTime = 0;
         double deadTime = 0;
@@ -107,8 +106,6 @@ namespace LD28
             alpha = 1f;
 
             knockbackTime = 0;
-            landingHeight = spawnPosition.Y;
-            Sector = 0;
 
 
         }
@@ -148,9 +145,9 @@ namespace LD28
             skeleton.FindSlot("fist-item").A = 0f;
         }
 
-        public void LoadContent(SkeletonRenderer sr, Texture2D bt, Atlas atlas, string json)
+        public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
         {
-            blankTex = bt;
+            //blankTex = bt;
             skeletonRenderer =sr;
 
             SkeletonJson skjson = new SkeletonJson(atlas);
@@ -187,12 +184,13 @@ namespace LD28
 
             skeleton.UpdateWorldTransform();
 
+            skeleton.SetAttachment("melee-item", null);
             skeleton.FindSlot("fist-item").A = 0f;
 
-
+            State = AIState.Panic;
         }
 
-        public void Update(GameTime gameTime, Map gameMap, float planeRot)
+        public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot)
         {
             if (Active)
             {
@@ -201,7 +199,15 @@ namespace LD28
 
                 if (!IsPlayer)
                 {
-                   
+                    switch (State)
+                    {
+                        case AIState.Panic:
+                            if (Helper.Random.Next(50) == 0)
+                            {
+                                targetPosition = new Vector2(200f + Helper.Random.Next((gameMap.Width * gameMap.TileWidth) - 200), Position.Y);
+                            }
+                            break;
+                    }
 
                     //if (notMovedTime > 500)
                     //{
@@ -258,11 +264,11 @@ namespace LD28
                     //    }
                     //}
 
-                    //if (targetPosition.X - 50 > Position.X)
-                    //    MoveLeftRight(1);
+                    if (targetPosition.X > Position.X)
+                        MoveLeftRight(1);
 
-                    //if (targetPosition.X + 50 < Position.X)
-                    //    MoveLeftRight(-1);
+                    if (targetPosition.X < Position.X)
+                        MoveLeftRight(-1);
 
                     //if (targetPosition.Y - landingHeight < -5 || targetPosition.Y - landingHeight > 5)
                     //{
@@ -373,7 +379,7 @@ namespace LD28
                         //Animations["jump"].Mix(skeleton, animTime, false, 0.5f);
                     }
 
-                    if (!jumping && !falling) landingHeight = Position.Y;
+                    //if (!jumping && !falling) landingHeight = Position.Y;
 
                     //if (punchHeld && !punchReleased)
                     //{
@@ -453,11 +459,11 @@ namespace LD28
                     //    attackCharge = 0f;
                     //}
 
-                    attackCharge = MathHelper.Clamp(attackCharge, 0f, 50f);
+                    //attackCharge = MathHelper.Clamp(attackCharge, 0f, 50f);
 
                     Speed.Normalize();
 
-                    if (Speed.Length() > 0f || pushingUp)
+                    if (Speed.Length() > 0f)
                     {
                         //CheckCollision(gameTime, gameMap, levelSectors, walkableLayers, gameHero.Sector);
                         if (Speed.Length() > 0f)
@@ -498,7 +504,7 @@ namespace LD28
                 //    skeleton.SetAttachment("projectile-item", null);
                 //}
 
-                pushingUp = false;
+                //pushingUp = false;
             }
 
             if (!Active)
@@ -539,14 +545,7 @@ namespace LD28
                 Position += JumpSpeed;
                 JumpSpeed += gravity;
 
-                if (Position.Y >= landingHeight)
-                {
-                    falling = false;
-                    JumpSpeed = Vector2.Zero;
-                    Position.Y = landingHeight;
-                   // AudioController.PlaySFX("land", 1f, 0f, 0f);
-
-                }
+                
             }
 
             skeleton.A = alpha;
@@ -577,10 +576,6 @@ namespace LD28
 
             walking = false;
 
-            if (Position.X > (gameMap.Width * gameMap.TileWidth) * (Sector + 1))
-                Sector++;
-            if (Position.X < (gameMap.Width * gameMap.TileWidth) * (Sector))
-                Sector--;
 
           //  Health = MathHelper.Clamp(Health, 0f, 121f);
 
@@ -631,18 +626,7 @@ namespace LD28
 
         }
 
-        public void MoveUpDown(float dir)
-        {
-            if (knockbackTime > 0 || pickingUp) return;
-
-            if(dir==-1) pushingUp = true;
-            if (jumping || falling) return;
-           // if (dir > 0) faceDir = 1; else faceDir = -1;
-
-            Speed.Y = dir;
-            walking = true;
-
-        }
+        
 
         public void Jump()
         {
@@ -672,7 +656,7 @@ namespace LD28
         {
             if (knockbackTime > 0 || pickingUp) return;
 
-            if (punchHeld && !p) punchReleased = true;
+            //if (punchHeld && !p) punchReleased = true;
             punchHeld = p;
         }
 
