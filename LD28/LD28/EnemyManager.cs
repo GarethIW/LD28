@@ -47,11 +47,11 @@ namespace LD28
             JsonDict.Add("dude", File.ReadAllText(Path.Combine(content.RootDirectory, "dude/dude.json")));
         }
 
-        public void Update(GameTime gameTime, Camera gameCamera, Map gameMap, Dude gameHero, float planeRot)
+        public void Update(GameTime gameTime, Camera gameCamera, Map gameMap, Dude gameHero, float planeRot, bool doorOpen)
         {
             foreach (Dude r in Enemies)
             {
-                r.Update(gameTime, gameMap, gameHero, planeRot);
+                r.Update(gameTime, gameMap, gameHero, planeRot, doorOpen);
                 //r.Position = Vector2.Clamp(r.Position, gameCamera.Position - (new Vector2(gameCamera.Width + 300f, gameCamera.Height*2) / 2), gameCamera.Position + (new Vector2(gameCamera.Width + 300f, gameCamera.Height*2) / 2));
             }
 
@@ -61,9 +61,9 @@ namespace LD28
             }
         }
 
-        public void Draw(GraphicsDevice gd, SpriteBatch sb, Camera gameCamera, float minY, float maxY)
+        public void Draw(GraphicsDevice gd, SpriteBatch sb, Camera gameCamera, float minY, float maxY, bool inPlane)
         {
-            foreach (Dude r in Enemies.OrderBy(en=>en.HasParachute))
+            foreach (Dude r in Enemies.Where(en=>en.IsInPlane==inPlane).OrderBy(en=>en.HasParachute))
             {
                 //if(r.Position.Y>=minY && r.Position.Y<maxY)
                     r.Draw(gd,sb,gameCamera);
@@ -100,7 +100,7 @@ namespace LD28
             float mindist = 10000f;
             int numHits = 0;
 
-            foreach (Dude r in Enemies.OrderByDescending(en => en.HasParachute))
+            foreach (Dude r in Enemies.Where(en=>en.IsInPlane).OrderByDescending(en => en.HasParachute))
             {
                 if ((r.Position - pos).Length() < mindist && (r.Position - pos).Length() < maxDist && r.Active && r.knockbackTime<=0)
                 {

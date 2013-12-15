@@ -55,16 +55,27 @@ namespace LD28
 
         SoundEffectInstance sfxEngine;
         SoundEffectInstance sfxPanic;
+        SoundEffectInstance sfxWind;
         Texture2D texBlank;
+        Texture2D texDoor;
+        SpriteFont fontAltitude;
 
         KeyboardState lks;
 
+        double doorAnimTime = 0;
+        int doorFrame = 0;
+        bool doorOpen = false;
+
         double introTimer = 0;
 
-        float fadeIn =1f;
+        float fadeIn = 1f;
+        Color currentFade = Color.White * 0f;
+        bool fadingWhite = false;
 
         float planeRot = 0f;
         float planeRotTarget;
+
+        int planeAltitude = 35000;
 
         public LD28Game()
         {
@@ -99,41 +110,21 @@ namespace LD28
             AudioController.LoadContent(Content);
             sfxEngine = Content.Load<SoundEffect>("sfx/engine").CreateInstance();
             sfxPanic = Content.Load<SoundEffect>("sfx/panic").CreateInstance();
+            sfxWind = Content.Load<SoundEffect>("sfx/wind").CreateInstance();
+            sfxEngine.IsLooped = true;
+            sfxPanic.IsLooped = true;
+            sfxWind.IsLooped = true;
 
             texBlank = Content.Load<Texture2D>("blank");
+            texDoor = Content.Load<Texture2D>("door");
+            fontAltitude = Content.Load<SpriteFont>("altfont");
 
             speechBubble = new Speechbubble(Content);
 
             gameMap = Content.Load<Map>("planemap");
             gameCamera = new Camera(GraphicsDevice.Viewport, gameMap);
 
-            particleManager = new ParticleManager();
-            particleManager.LoadContent(Content);
-
-            enemyManager = new EnemyManager();
-            enemyManager.LoadContent(Content, GraphicsDevice);
-            enemyManager.Spawn(gameMap);
-
-            itemManager = new ItemManager();
-            itemManager.LoadContent(Content, GraphicsDevice);
-
-            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, 500f));
-
-            //pilot = new Dude(new Vector2(100,100), true);
-            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, 610f), true);
-            pilot.Scale = 2f;
-            pilot.LoadContent(Content, GraphicsDevice);
-
-            gameCamera.Position = pilot.Position;
-
-            sfxEngine.IsLooped = true;
-            sfxPanic.IsLooped = true;
-            sfxPanic.Volume = 0.4f;
-            sfxEngine.Play();
-
-            gameState = GameState.Intro;
-            introState = IntroState.FadeIn;
-            introTimer = 0;
+            Reset();
         }
 
         /// <summary>
@@ -173,15 +164,51 @@ namespace LD28
                         if (Helper.Random.Next(500) == 0)
                             if (planeRotTarget < 0f) planeRotTarget = 0f;
 
+                        planeAltitude -= 1 + (int)(-50f * planeRot);
+
                         planeRot = (float)MathHelper.Lerp(planeRot, planeRotTarget, 0.01f);
-                        pilot.Update(gameTime, gameMap, pilot, planeRot);
+                        pilot.Update(gameTime, gameMap, pilot, planeRot, (doorOpen && doorFrame == 3));
 
-                        enemyManager.Update(gameTime, gameCamera, gameMap, pilot, planeRot);
+                        enemyManager.Update(gameTime, gameCamera, gameMap, pilot, planeRot, (doorOpen && doorFrame==3));
 
-                        
+                        CheckDoor();
+
+                        if (doorOpen)
+                        {
+                            if (doorFrame < 3)
+                            {
+                                doorAnimTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                                if (doorAnimTime >= 200)
+                                {
+                                    doorAnimTime = 0;
+                                    doorFrame++;
+                                }
+                            }
+                        }
+
+                        if (planeAltitude <= 0 && pilot.IsInPlane)
+                        {
+                            planeAltitude = 0;
+                            gameState = GameState.Outro;
+                            fadingWhite = true;
+                            currentFade = Color.White * 0f;
+                            AudioController.PlaySFX("explode");
+                            sfxPanic.Stop();
+                            sfxEngine.Stop();
+                        }
+
+                        if (!pilot.IsInPlane)
+                        {
+                            sfxWind.Play();
+                            if (sfxPanic.Volume > 0f) sfxPanic.Volume = MathHelper.Clamp(sfxPanic.Volume - 0.01f, 0f, 1f);
+                            if (sfxEngine.Volume > 0f) sfxEngine.Volume -= MathHelper.Clamp(sfxEngine.Volume - 0.01f, 0f, 1f);
+                            if (sfxWind.Volume < 1f) sfxWind.Volume += MathHelper.Clamp(sfxWind.Volume - 0.01f, 0f, 1f);
+                        }
+
                         break;
 #region Intro
                     case GameState.Intro:
+                        //planeAltitude -= (int)(-300f * planeRot);
                         if (fadeIn > 0f) fadeIn -= 0.01f;
                         if ((cks.IsKeyDown(Keys.Space) && !lks.IsKeyDown(Keys.Space)) || (cks.IsKeyDown(Keys.Z)) && !lks.IsKeyDown(Keys.Z)) introTimer += 5000f; 
                         introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -241,6 +268,27 @@ namespace LD28
                         }
                         break;
 #endregion
+                    case GameState.Outro:
+                        if (planeAltitude == 0)
+                        {
+                            if (fadingWhite)
+                            {
+                                currentFade = Color.Lerp(currentFade, Color.White * 1f, 0.1f);
+                                if (currentFade.A > 230) fadingWhite = false;
+                            }
+                            else
+                            {
+                                currentFade = Color.Lerp(currentFade, Color.Black * 1f, 0.05f);
+                                if (currentFade.R < 30)
+                                {
+                                    currentFade = Color.Black * 1f;
+                                    introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                                    if (introTimer >= 5000) Reset();
+                                }
+
+                            }
+                        }
+                        break;
                 }
 
 
@@ -273,6 +321,26 @@ namespace LD28
             base.Update(gameTime);
         }
 
+        void CheckDoor()
+        {
+            MapObject door = ((MapObjectLayer)gameMap.GetLayer("door")).Objects[0];
+            Point checkpoint;
+            if (pilot.HasParachute) 
+            {
+                checkpoint = new Point((int)pilot.Position.X, (int)pilot.Position.Y);
+                if(door.Location.Contains(checkpoint)) doorOpen = true;
+            }
+            foreach (Dude d in enemyManager.Enemies)
+            {
+                if (d.HasParachute)
+                {
+                    checkpoint = new Point((int)d.Position.X, (int)d.Position.Y);
+                    if (door.Location.Contains(checkpoint)) doorOpen = true;
+                }
+            }
+        }
+
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -283,24 +351,80 @@ namespace LD28
 
             particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera,0f,0.9f);
 
+            enemyManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0f, 0f, false);
+            if (!pilot.IsInPlane) pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
+
             spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, gameCamera.CameraMatrix);
+            spriteBatch.Draw(texDoor, new Vector2(600, 100), new Rectangle(300 * doorFrame, 0, 300, 600), Color.White);
             gameMap.DrawLayer(spriteBatch, "internal", gameCamera);
             spriteBatch.End();
 
-            enemyManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0f, 0f);
-            pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
+            enemyManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0f, 0f, true);
+            if(pilot.IsInPlane) pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
             itemManager.Draw(GraphicsDevice, spriteBatch, gameCamera);
 
             //particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0.901f, 1f);
-            if (gameState == GameState.Intro)
+
+            if (pilot.IsInPlane)
             {
-                speechBubble.Draw(spriteBatch, gameCamera);
                 spriteBatch.Begin();
-                spriteBatch.Draw(texBlank, GraphicsDevice.Viewport.Bounds, Color.Black * fadeIn);
+                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width/2, 20)+Vector2.One, Color.Black, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
+                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width/2, 20), Color.White, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
                 spriteBatch.End();
             }
 
+            if (gameState == GameState.Intro)
+            {
+                speechBubble.Draw(spriteBatch, gameCamera);
+                
+            }
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(texBlank, GraphicsDevice.Viewport.Bounds, Color.Black * fadeIn);
+            spriteBatch.Draw(texBlank, GraphicsDevice.Viewport.Bounds, currentFade);
+            spriteBatch.End();
+
             base.Draw(gameTime);
+        }
+
+        void Reset()
+        {
+            currentFade = Color.White * 0f;
+            fadeIn = 1f;
+
+            particleManager = new ParticleManager();
+            particleManager.LoadContent(Content);
+
+            enemyManager = new EnemyManager();
+            enemyManager.LoadContent(Content, GraphicsDevice);
+            enemyManager.Spawn(gameMap);
+
+            itemManager = new ItemManager();
+            itemManager.LoadContent(Content, GraphicsDevice);
+
+            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, 500f));
+
+            //pilot = new Dude(new Vector2(100,100), true);
+            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, 610f), true);
+            pilot.Scale = 2f;
+            pilot.LoadContent(Content, GraphicsDevice);
+
+            gameCamera.Position = pilot.Position;
+
+            sfxEngine.Stop();
+            sfxPanic.Stop();
+            sfxWind.Stop();
+            sfxPanic.Volume = 0.4f;
+            sfxEngine.Volume = 1f;
+            sfxWind.Volume = 1f;
+            sfxEngine.Play();
+
+            gameState = GameState.Intro;
+            introState = IntroState.FadeIn;
+            introTimer = 0;
+
+            planeRot = 0f;
+            planeAltitude = 35000;
         }
     }
 }

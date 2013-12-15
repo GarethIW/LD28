@@ -41,6 +41,8 @@ namespace LD28
 
         public int Health = 3;
 
+        public bool IsInPlane = true;
+
         Vector2 gravity = new Vector2(0f, 0.333f);
 
         Rectangle collisionRect = new Rectangle(0, 0, 3, 150);
@@ -80,6 +82,8 @@ namespace LD28
         bool pickingUp = false;
         bool hasPickedUp = false;
         double pickupTime = 0;
+
+        float fallSpeedX;
 
         // AI stuff
         Vector2 targetPosition = Vector2.Zero;
@@ -141,6 +145,8 @@ namespace LD28
             Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
             Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
             Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
+            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
+
 
             skeleton.RootBone.X = Position.X;
             skeleton.RootBone.Y = Position.Y;
@@ -209,7 +215,7 @@ namespace LD28
             State = AIState.Panic;
         }
 
-        public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot)
+        public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot, bool doorOpen)
         {
             if (HasParachute)
             {
@@ -218,6 +224,29 @@ namespace LD28
             }
             else
                 skeleton.SetAttachment("chute", null);
+
+            if (doorOpen && IsInPlane)
+            {
+                Active = false;
+                animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
+                Animations["knockback"].Mix(skeleton, animTime, true, 0.3f);
+                if (Position.X > 750f) Position.X -= 40f;
+                if (Position.X < 750f) Position.X += 40f;
+                if (Position.X > 650f && Position.X < 850f)
+                {
+                    IsInPlane = false;
+                    fallSpeedX = Helper.RandomFloat(-20f, 0f);
+                }
+            }
+
+            if (!IsInPlane)
+            {
+                Active = false;
+                animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
+                Animations["panic"].Mix(skeleton, animTime, true, 0.3f);
+                Position.Y -= 20f;
+                Position.X += fallSpeedX;
+            }
 
             if (Active)
             {
@@ -281,7 +310,9 @@ namespace LD28
                             break;
 
                         case AIState.GoingForParachute:
-                            targetPosition = chute.Position;
+                            if (Vector2.Distance(chute.Position, Position) > 50f)
+                                targetPosition = chute.Position;
+                            //else targetPosition = Position;
                             if (targetPosition.X - 50 > Position.X)
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
@@ -446,7 +477,7 @@ namespace LD28
                                     switch (State)
                                     {
                                         case AIState.AttackingHero:
-                                            if ((Position - gameHero.Position).Length() < attackRange) gameHero.DoHit(Position, 1f, faceDir, gameHero);
+                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 1f, faceDir, gameHero);
                                             State = AIState.Panic;
                                             break;
                                         case AIState.AttackingOther:
@@ -536,7 +567,7 @@ namespace LD28
 
             if (!Active)
             {
-                if (HasParachute && ChuteItem != null)
+                if (HasParachute && ChuteItem != null && IsInPlane)
                 {
                     ChuteItem.InWorld = true;
                     ChuteItem.DroppedPosition = Position;
@@ -595,10 +626,14 @@ namespace LD28
 
             collisionRect.Location = new Point((int)Position.X - (collisionRect.Width / 2), (int)Position.Y - (collisionRect.Height));
 
-            Position.X -= (planeRot * 10f);
+            if (IsInPlane && !doorOpen)
+            {
+                Position.X -= (planeRot * 10f);
+                targetPosition.X -= (planeRot * 10f);
 
-            Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
-            Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
+                Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
+                Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
+            }
 
             skeleton.RootBone.X = Position.X;
             skeleton.RootBone.Y = Position.Y;
