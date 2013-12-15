@@ -11,15 +11,15 @@ namespace LD28
     public enum ItemType
     {
         Melee,
-        Projectile,
         Chute
 
     }
 
     public enum ItemName
     {
-        Chute,
-        Crowbar
+        Weapon0,
+        Weapon1,
+        Chute
     }
 
     public class Item
@@ -104,7 +104,7 @@ namespace LD28
         public virtual void Draw(SpriteBatch sb, Camera gameCamera)
         {
             if(InWorld)
-                sb.Draw(itemTexture, Position, itemSource, Color.White * alpha, 0f, new Vector2(itemSource.Width/2, itemSource.Height),2f, SpriteEffects.None, 1);
+                sb.Draw(itemTexture, Position, itemSource, Color.White * alpha, 0f, new Vector2(itemSource.Width/2, itemSource.Height-5f),2f, SpriteEffects.None, 1);
         }
 
         public virtual void Use(int faceDir, float attackCharge, Dude gameHero)

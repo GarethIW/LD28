@@ -89,6 +89,8 @@ namespace LD28
 
         double tutorialTime = 15000;
 
+        string[] endingQuips = new string[] { "Yep.", "Well that just happened.", "Owned." };
+
         public LD28Game()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -108,6 +110,12 @@ namespace LD28
             graphics.ApplyChanges();
 
             base.Initialize();
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            
+            base.OnExiting(sender, args);
         }
 
         /// <summary>
@@ -148,7 +156,7 @@ namespace LD28
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            
         }
 
         /// <summary>
@@ -170,10 +178,12 @@ namespace LD28
                 {
                     case GameState.InGame:
                         tutorialTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                        speechBubble.Visible = false;
 
                         if (cks.IsKeyDown(Keys.Left)) pilot.MoveLeftRight(-1);
                         if (cks.IsKeyDown(Keys.Right)) pilot.MoveLeftRight(1);
                         pilot.Attack(cks.IsKeyDown(Keys.Z));
+                        if(cks.IsKeyDown(Keys.X) && !lks.IsKeyDown(Keys.X)) pilot.Pickup();
 
                         if (Helper.Random.Next(200) == 0 && pilot.IsInPlane)
                         {
@@ -187,10 +197,10 @@ namespace LD28
                             rattleTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
                             if (rattleTime <= 0) sfxRattle.Pause();
                         }
-                        if (Helper.Random.Next(100) == 0)
-                            if (planeRotTarget >= 0f) planeRotTarget = Helper.RandomFloat(-0.3f, 0f);
-                        if (Helper.Random.Next(500) == 0)
-                            if (planeRotTarget < 0f) planeRotTarget = 0f;
+                        if (Helper.Random.Next(200) == 0)
+                            if (planeRotTarget >= -0.1f) planeRotTarget = Helper.RandomFloat(-0.3f, -0.1f);
+                        if (Helper.Random.Next(200) == 0)
+                            if (planeRotTarget < -0.1f) planeRotTarget = -0.1f;
 
                         planeAltitude -= 1 + (int)(-50f * planeRot);
                         gradHeight = ((texGradient.Height - GraphicsDevice.Viewport.Height) / 35000f) * (35000f - (float)planeAltitude);
@@ -224,6 +234,7 @@ namespace LD28
                             AudioController.PlaySFX("explode");
                             sfxPanic.Stop();
                             sfxEngine.Stop();
+                            sfxRattle.Pause();
                         }
 
                         if (!pilot.IsInPlane)
@@ -257,6 +268,7 @@ namespace LD28
                                     else currentFade = Color.Black * 0f;
                                     introTimer = 0;
                                     gameState = GameState.Outro;
+                                    if(pilot.HasParachute) speechBubble.Show(pilot.Position + new Vector2(0f, -280f), endingQuips[Helper.Random.Next(endingQuips.Length)]);
                                     sfxWind.Stop();
                                 }
                             }
@@ -282,7 +294,7 @@ namespace LD28
                                 }
                                 break;
                             case IntroState.PostExplosion:
-                                if (planeRot > -0.1f) planeRot -= 0.0001f;
+                                if (planeRot > -0.05f) planeRot -= 0.0001f;
                                 if (introTimer > 2000)
                                 {
                                     introTimer = 0;
@@ -320,6 +332,7 @@ namespace LD28
                                     introTimer = 0;
                                     speechBubble.Visible = false;
                                     gameState = GameState.InGame;
+                                    planeRotTarget = -0.1f;
                                 }
                                 break;
                         }
@@ -331,8 +344,9 @@ namespace LD28
                             if (pilot.HasParachute && !pilot.IsInPlane)
                             {
                                 introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-                                if (introTimer > 2000)
+                                if (introTimer > 3000)
                                 {
+                                    speechBubble.Visible = false;
                                     currentFade = Color.Lerp(currentFade, Color.Black * 1f, 0.05f);
                                     if (currentFade.R < 30 && currentFade.A > 230)
                                     {
@@ -478,11 +492,10 @@ namespace LD28
                 spriteBatch.End();
             }
 
-            if (gameState == GameState.Intro)
-            {
-                speechBubble.Draw(spriteBatch, gameCamera);
+            
+            speechBubble.Draw(spriteBatch, gameCamera);
                 
-            }
+            
 
             if (tutorialTime > 0 && gameState == GameState.InGame)
             {
@@ -516,6 +529,7 @@ namespace LD28
             itemManager.LoadContent(Content, GraphicsDevice);
 
             itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, planeFloorHight-100f));
+            itemManager.SpawnRandom(10, planeFloorHight);
 
             //pilot = new Dude(new Vector2(100,100), true);
             pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, planeFloorHight), true);

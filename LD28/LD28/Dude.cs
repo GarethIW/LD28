@@ -84,6 +84,8 @@ namespace LD28
         bool hasPickedUp = false;
         double pickupTime = 0;
 
+        int walkFrameCount = 0;
+
         float fallSpeedX;
 
         // AI stuff
@@ -486,13 +488,23 @@ namespace LD28
                     }
 
                     if (knockbackTime<0 && Vector2.Distance(targetPosition, Position) < 10f) targetPosition = Position;
-                   
+
+                    if ((State == AIState.GoingForDoor || State == AIState.GoingForParachute || State == AIState.Panic) && Item == null)
+                    {
+                        Item closest = ItemManager.Instance.ClosestItem(this);
+                        
+                        if(closest!=null && Vector2.Distance(closest.Position, Position)<50f)
+                        {
+                            Pickup();
+                        }
+                    }
                 }
 
                
 
                 if (!walking && !jumping && knockbackTime <= 0)
                 {
+                    walkFrameCount = 0;
                     Animations["walk"].Apply(skeleton, 0f, false);
                     if (!IsPlayer && State == AIState.Panic)
                     {
@@ -503,9 +515,12 @@ namespace LD28
 
                 if (walking && !jumping && knockbackTime <= 0)
                 {
-                    animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
-
-                    Animations["walk"].Mix(skeleton, animTime, true, 0.3f);
+                    walkFrameCount++;
+                    if (walkFrameCount > 5)
+                    {
+                        animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
+                        Animations["walk"].Mix(skeleton, animTime, true, 0.3f);
+                    }
                     if (!IsPlayer && State == AIState.Panic) Animations["panic"].Mix(skeleton, animTime, true, 0.8f);
                 }
 
@@ -518,7 +533,7 @@ namespace LD28
 
                     if (pickupTime > 150 && !hasPickedUp)
                     {
-                        //ItemManager.Instance.AttemptPickup(this);
+                        ItemManager.Instance.AttemptPickup(this);
                         hasPickedUp = true;
                     }
                     if (pickupTime >= 300)
@@ -534,10 +549,18 @@ namespace LD28
                     {
                         ChuteItem.InWorld = true;
                         ChuteItem.DroppedPosition = Position;
-                        ChuteItem.Position = Position + new Vector2(0, -100);
+                        ChuteItem.Position = Position + new Vector2(0, -50);
                         ChuteItem.Speed = new Vector2(0f,0.1f);
                         ChuteItem = null;
                         HasParachute = false;
+                    }
+                    if (Item != null)
+                    {
+                        Item.InWorld = true;
+                        Item.DroppedPosition = Position;// +new Vector2(0, -75);
+                        Item.Position = Position + new Vector2(0, -50);
+                        Item.Speed = new Vector2(0f,0.1f);
+                        Item = null;
                     }
 
                     knockbackTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -584,13 +607,13 @@ namespace LD28
 
                             
                         }
-                        //else if (Item.Type == ItemType.Melee)
-                        //{
-                           
-                        //    Animations["punch-hold"].Apply(skeleton, 1f, false);
+                        else if (Item.Type == ItemType.Melee)
+                        {
+                          
+                            Animations["punch-hold"].Apply(skeleton, 1f, false);
 
 
-                        //}
+                        }
                         //else if (Item.Type == ItemType.Projectile)
                         //{
                         //    attackCharge += 0.25f;
@@ -611,17 +634,17 @@ namespace LD28
                             {
                                 //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
                                 if (IsPlayer)
-                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
                                 else
                                 {
                                     switch (State)
                                     {
                                         case AIState.AttackingHero:
-                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 1f, faceDir, gameHero);
+                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 0f, faceDir, gameHero);
                                             State = AIState.Panic;
                                             break;
                                         case AIState.AttackingOther:
-                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
                                             State = AIState.Panic;
                                             break;
                                     }
@@ -629,15 +652,40 @@ namespace LD28
                                 
                             }
                         }
-                        //else if (Item.Type == ItemType.Melee)
-                        //{
-                        //    if (punchReleaseTime == 0)
-                        //    {
-                        //        AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
-                        //        Item.Use(faceDir, attackCharge, gameHero);
+                        else if (Item.Type == ItemType.Melee)
+                        {
+                            if (punchReleaseTime == 0)
+                            {
+                                //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
+                                if (IsPlayer)
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                else
+                                {
+                                    //switch (State)
+                                    //{
+                                      //  case AIState.AttackingHero:
+                                    if ((Position - gameHero.Position).Length() < attackRange + (20 * ((int)Item.Name + 2)) && gameHero.IsInPlane)
+                                    {
+                                        gameHero.DoHit(Position, (float)(250 * ((int)Item.Name + 2)), faceDir, gameHero);
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
 
-                        //    }
-                        //}
+                                    }
+                                    else
+                                    {
+
+                                        //    break;
+                                        //case AIState.AttackingOther:
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                        //  State = AIState.Panic;
+                                        //break;
+                                    }
+                                            State = AIState.Panic;
+
+                                    //}
+                                }
+
+                            }
+                        }
                         //else if (Item.Type == ItemType.Projectile)
                         //{
                         //    punchReleaseTime = Item.Cooldown;
@@ -669,17 +717,7 @@ namespace LD28
                     Speed = Vector2.Zero;
                 }
 
-                //if (Item != null)
-                //{
-                //    if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f, 0f, 1f);
-                //    if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f, -0.9f, 0.9f);
-
-
-                //    if (Item.Type == ItemType.Melee)
-                //    {
-                //        skeleton.SetAttachment("melee-item", Item.Name);
-                //        skeleton.SetAttachment("projectile-item", null);
-                //    }
+                
                 //    else
                 //    {
                 //        skeleton.SetAttachment("projectile-item", Item.Name);
@@ -711,11 +749,19 @@ namespace LD28
                 {
                     ChuteItem.InWorld = true;
                     ChuteItem.DroppedPosition = Position;
-                    ChuteItem.Position = Position + new Vector2(0, -100);
+                    ChuteItem.Position = Position + new Vector2(0, -50);
                     ChuteItem.Speed = new Vector2(0f, 0.1f);
                     ChuteItem = null;
                     HasParachute = false;
                     
+                }
+                if (Item != null)
+                {
+                    Item.InWorld = true;
+                    Item.DroppedPosition = Position;// +new Vector2(0, -75);
+                    Item.Position = Position + new Vector2(0, -50);
+                    Item.Speed = new Vector2(0f, 0.1f);
+                    Item = null;
                 }
 
                 if (!IsInPlane)
@@ -756,6 +802,15 @@ namespace LD28
                 }
 
             }
+
+            if (Item != null)
+            {
+                if (Item.Type == ItemType.Melee)
+                {
+                    skeleton.SetAttachment("melee-item", Item.Name.ToString().ToLower());
+                }
+            }
+            else skeleton.SetAttachment("melee-item", null);
 
             if (falling)
             {
@@ -866,7 +921,7 @@ namespace LD28
 
         public void Pickup()
         {
-            if (knockbackTime > 0 || pickingUp || jumping || falling) return;
+            if (!Active || knockbackTime > 0 || pickingUp) return;
 
             animTime = 0;
             pickingUp = true;
@@ -1122,7 +1177,7 @@ namespace LD28
 
                 if (knockbackTime <= 0)
                 {
-                    knockbackTime = 1000f;
+                    knockbackTime = 1000f + power;
                     faceDir = -face;
                     if (IsPlayer) knockbackTime *= 0.5;
                     Speed.X = 15f * (float)face;
@@ -1139,7 +1194,7 @@ namespace LD28
             {
                 //knockbackTime = 3000f;
                 //knockbackTime = 1000f;
-                deadTime = Helper.Random.NextDouble()*5000;
+                deadTime = 1000 + Helper.Random.NextDouble()*4000;
                 faceDir = -face;
                 if (IsPlayer) knockbackTime *= 0.5;
                 Speed.X = 15f * (float)face;
