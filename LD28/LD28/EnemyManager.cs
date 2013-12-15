@@ -70,7 +70,7 @@ namespace LD28
             }
         }
 
-        public void Spawn(Map gameMap)
+        public void Spawn(Map gameMap, float floorheight)
         {
             //int numSpawned = 0;
             // Left or right side?
@@ -84,7 +84,7 @@ namespace LD28
                 Enemies.Add(d);
             }
 
-            d = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 380f, 605f), false);
+            d = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 380f, floorheight-5), false);
             d.Tint = Color.Navy;
             d.faceDir = 1;
             d.Scale = 2f;

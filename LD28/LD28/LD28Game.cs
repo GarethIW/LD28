@@ -77,6 +77,8 @@ namespace LD28
 
         int planeAltitude = 35000;
 
+        float planeFloorHight = 1510f;
+
         public LD28Game()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -296,7 +298,7 @@ namespace LD28
                 {
                     float zindex = Helper.RandomFloat(0f, 1f);
                     particleManager.Add(ParticleType.Cloud,
-                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width / 2), Helper.RandomFloat(-50f, GraphicsDevice.Viewport.Height + 200f)),
+                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width / 2), Helper.RandomFloat(700f, (gameMap.Height * gameMap.TileHeight))),
                                         new Vector2(-zindex * (20f), -0.1f + planeRot),
                                         30000f * (1f - zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
                 }
@@ -355,7 +357,7 @@ namespace LD28
             if (!pilot.IsInPlane) pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
 
             spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, gameCamera.CameraMatrix);
-            spriteBatch.Draw(texDoor, new Vector2(600, 100), new Rectangle(300 * doorFrame, 0, 300, 600), Color.White);
+            spriteBatch.Draw(texDoor, new Vector2(1200, 1000), new Rectangle(300 * doorFrame, 0, 300, 600), Color.White);
             gameMap.DrawLayer(spriteBatch, "internal", gameCamera);
             spriteBatch.End();
 
@@ -397,15 +399,15 @@ namespace LD28
 
             enemyManager = new EnemyManager();
             enemyManager.LoadContent(Content, GraphicsDevice);
-            enemyManager.Spawn(gameMap);
+            enemyManager.Spawn(gameMap, planeFloorHight);
 
             itemManager = new ItemManager();
             itemManager.LoadContent(Content, GraphicsDevice);
 
-            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, 500f));
+            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, planeFloorHight-100f));
 
             //pilot = new Dude(new Vector2(100,100), true);
-            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, 610f), true);
+            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, planeFloorHight), true);
             pilot.Scale = 2f;
             pilot.LoadContent(Content, GraphicsDevice);
 
