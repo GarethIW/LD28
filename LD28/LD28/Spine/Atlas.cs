@@ -39,16 +39,16 @@ namespace Spine {
 	public class Atlas : BaseAtlas {
 		private GraphicsDevice device;
 
-		public Atlas (GraphicsDevice device, String atlasFile) {
+		public Atlas (GraphicsDevice device, String atlasFile, ContentManager content) {
 			this.device = device;
-			using (StreamReader reader = new StreamReader(atlasFile)) {
-				load(reader, Path.GetDirectoryName(atlasFile));
+			using (StreamReader reader = new StreamReader(Path.Combine(content.RootDirectory, atlasFile))) {
+				load(reader, Path.GetDirectoryName(atlasFile), content);
 			}
 		}
 
-		override protected AtlasPage NewAtlasPage (String path) {
+		override protected AtlasPage NewAtlasPage (String path, ContentManager content) {
 			XnaAtlasPage page = new XnaAtlasPage();
-			page.Texture = loadTexture(path);
+			page.Texture = content.Load<Texture2D>(path);
 			return page;
 		}
 
@@ -65,7 +65,7 @@ namespace Spine {
 
 			// Multiply each color by the source alpha, and write in just the color values into the final texture
 			BlendState blendColor = new BlendState();
-			blendColor.ColorWriteChannels = ColorWriteChannels.Red | ColorWriteChannels.Green | ColorWriteChannels.Blue;
+            blendColor.ColorWriteChannels = ColorWriteChannels.Red | ColorWriteChannels.Green | ColorWriteChannels.Blue;
 			blendColor.AlphaDestinationBlend = Blend.Zero;
 			blendColor.ColorDestinationBlend = Blend.Zero;
 			blendColor.AlphaSourceBlend = Blend.SourceAlpha;
@@ -77,16 +77,16 @@ namespace Spine {
 			spriteBatch.End();
 
 			// Now copy over the alpha values from the PNG source texture to the final one, without multiplying them
-			BlendState blendAlpha = new BlendState();
-			blendAlpha.ColorWriteChannels = ColorWriteChannels.Alpha;
-			blendAlpha.AlphaDestinationBlend = Blend.Zero;
-			blendAlpha.ColorDestinationBlend = Blend.Zero;
-			blendAlpha.AlphaSourceBlend = Blend.One;
-			blendAlpha.ColorSourceBlend = Blend.One;
+            BlendState blendAlpha = new BlendState();
+            blendAlpha.ColorWriteChannels = ColorWriteChannels.Alpha;
+            blendAlpha.AlphaDestinationBlend = Blend.Zero;
+            blendAlpha.ColorDestinationBlend = Blend.Zero;
+            blendAlpha.AlphaSourceBlend = Blend.One;
+            blendAlpha.ColorSourceBlend = Blend.One;
 
-			spriteBatch.Begin(SpriteSortMode.Immediate, blendAlpha);
-			spriteBatch.Draw(file, file.Bounds, Color.White);
-			spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, blendAlpha);
+            spriteBatch.Draw(file, file.Bounds, Color.White);
+            spriteBatch.End();
 
 			// Release the GPU back to drawing to the screen
 			device.SetRenderTarget(null);

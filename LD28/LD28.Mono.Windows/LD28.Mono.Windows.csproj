@@ -35,14 +35,29 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\LD28\Dude.cs">
+      <Link>Dude.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\EnemyManager.cs">
+      <Link>EnemyManager.cs</Link>
+    </Compile>
     <Compile Include="..\LD28\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
-    <Compile Include="..\LD28\Hero.cs">
-      <Link>Hero.cs</Link>
+    <Compile Include="..\LD28\Item.cs">
+      <Link>Item.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ItemManager.cs">
+      <Link>ItemManager.cs</Link>
     </Compile>
     <Compile Include="..\LD28\LD28Game.cs">
       <Link>LD28Game.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ParticleManager.cs">
+      <Link>ParticleManager.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Speechbubble.cs">
+      <Link>Speechbubble.cs</Link>
     </Compile>
     <Compile Include="..\LD28\Spine\Animation.cs">
       <Link>Spine\Animation.cs</Link>
@@ -105,14 +120,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\_Dependencies\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\_Dependencies\MonoGame.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK">
       <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Lidgren.Network">
-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Tao.Sdl">
       <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\Tao.Sdl.dll</HintPath>
@@ -121,22 +138,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\LD27\LD27.Mono.Windows\bin\WindowsGL\Debug\SpatiumSecondorumDecem\OpenAL32.dll">
-      <Link>OpenAL32.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\LD27\LD27.Mono.Windows\bin\WindowsGL\Debug\SpatiumSecondorumDecem\Tao.Sdl.dll">
-      <Link>Tao.Sdl.dll</Link>
-    </Content>
-    <Content Include="..\..\..\LD27\LD27.Mono.Windows\bin\WindowsGL\Debug\SpatiumSecondorumDecem\wrap_oal.dll">
-      <Link>wrap_oal.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="C:\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
-      <Link>SDL.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icon.ico" />
+    <Content Include="OpenAL32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDL.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tao.Sdl.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wrap_oal.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

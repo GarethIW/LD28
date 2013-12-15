@@ -1,0 +1,81 @@
+dude.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+laserpistol
+  rotate: false
+  xy: 51, 83
+  size: 46, 28
+  orig: 60, 38
+  offset: 7, 5
+  index: -1
+_0000_Head
+  rotate: false
+  xy: 71, 2
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+chute
+  rotate: false
+  xy: 99, 96
+  size: 23, 48
+  orig: 25, 50
+  offset: 0, 0
+  index: -1
+_0004_Foot-Right
+  rotate: false
+  xy: 99, 83
+  size: 27, 11
+  orig: 27, 11
+  offset: 0, 0
+  index: -1
+_0005_Foot-Left
+  rotate: false
+  xy: 99, 83
+  size: 27, 11
+  orig: 27, 11
+  offset: 0, 0
+  index: -1
+_0007_Leg-Left
+  rotate: false
+  xy: 33, 113
+  size: 20, 48
+  orig: 20, 48
+  offset: 0, 0
+  index: -1
+_0006_Leg-Right
+  rotate: false
+  xy: 33, 113
+  size: 20, 48
+  orig: 20, 48
+  offset: 0, 0
+  index: -1
+_0003_Torso
+  rotate: false
+  xy: 2, 2
+  size: 67, 68
+  orig: 67, 68
+  offset: 0, 0
+  index: -1
+_0001_Arm-Lower
+  rotate: false
+  xy: 2, 72
+  size: 47, 28
+  orig: 47, 28
+  offset: 0, 0
+  index: -1
+_0002_Arm-Upper
+  rotate: false
+  xy: 2, 102
+  size: 29, 48
+  orig: 29, 48
+  offset: 0, 0
+  index: -1
+crowbar
+  rotate: false
+  xy: 71, 63
+  size: 54, 18
+  orig: 60, 26
+  offset: 3, 3
+  index: -1

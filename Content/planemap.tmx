@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="71" height="17" tilewidth="100" tileheight="100">
+ <tileset firstgid="1" name="PlaneInner-Seating" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Seating.png" width="1200" height="600"/>
+ </tileset>
+ <tileset firstgid="73" name="PlaneInner-FirstClass" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-FirstClass.png" width="1200" height="600"/>
+ </tileset>
+ <tileset firstgid="145" name="PlaneInner-Cockpit" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Cockpit.png" width="1200" height="600"/>
+ </tileset>
+ <tileset firstgid="217" name="PlaneInner-Partition" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Partition.png" width="300" height="600"/>
+ </tileset>
+ <tileset firstgid="235" name="PlaneInner-ExitClosed" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-ExitClosed.png" width="300" height="600"/>
+ </tileset>
+ <tileset firstgid="253" name="PlaneInner-ExitOpen" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-ExitOpen.png" width="300" height="600"/>
+ </tileset>
+ <tileset firstgid="271" name="PlaneInner-Toilet" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Toilet.png" width="300" height="600"/>
+ </tileset>
+ <tileset firstgid="289" name="Overhead-Open" tilewidth="100" tileheight="100">
+  <image source="Overhead-Open.png" width="300" height="120"/>
+ </tileset>
+ <tileset firstgid="292" name="PlaneOuter-Tail" tilewidth="100" tileheight="100">
+  <image source="PlaneOuter-Tail.png" width="1200" height="1600"/>
+ </tileset>
+ <layer name="internal" width="71" height="17">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+XT9e9VdRgH8PNFurvLoEu6pEu6RtfoGl2ja3QNSXVIqkNSHZLqkFSHfAl1gCCIyf+A+jq71+3cu91f/IFf7tle++xz93723Oe551bKCILKVKEq1ahODWpSi9rUId2eumauR30a0JBGNKYJTWlG8zTcTQszt6QVrWlDW9rRng50pFMa7qazmbvQlW50pwc96UVv+tA3DXfTz8z9GcBABjGYIQxlGMMZkYa7GWnmUYxmDGMZx3gmMJFJTE7D3Uwx81SmMZ0ZzGQWs5nDXOal4W7mm3kBC1nEYpawlGUsZwUr03A3q8y8mjWsZR3r2cBGNrGZLWm4m61mfottbGcHO9nFbt7mHd5Nw93sMfN77GUf+znAQQ7xPh/wYbhD+ef8zT/c4z4PCFeXhZfISjayk4Oc5CI3ecibVJsqH80U0KAghTISP+9MF7rSje70oCe96E0f+sYz0dqtQWymbWxnBzvZxW4O6/URRzjKMY5zgpN8zCd8Gu4wiC0hgyz85PqQR+QjfzgDBSlEYYpQlGIUpwQlg8TaVPloprB+RSia1Lcf/RnAQAYxmCEMZRjDGRHPRGv3BLGZ9rKP/RzgIIc4pddnnOYMZznHeS7wOV/wZbjD8L1wZiUbP7s/5gmlKE0ZylKO8lSgIi/zCq/yWpBYmyofzRTTrzglkvqOZBSjGcNYxjGeCUxkEpPjmWjt4SA20xGOcozjnOAkF/X6iktc5gpXucZ1vuYbvg13KJ/dmYOc/OL+lF+pRGWqUJVqVKcGNalFberwepBYmyofzZTUrxSlk/pOYSrTmM4MZjKL2cxhLvPimWjtqSA202nOcJZznOcCN/T6jptkcovb3OEu3/MDP4Y7lM/lzE0efnP/nT+oSz3q04CGNKIxTWhKM5rzRpBYmyofzZTRryzlkvrOZwELWcRilrCUZSxnBSvjmWjtxSA20yUuc4WrXOM69/S6z4Pwf8xDHoXvLY95Ev5OPA13KJ/XmY/8/On+F89oQUta0Zo2tKUd7elARzrxZpBYmyofzZTXrwIVk/quYjVrWMs61rOBjWxiM1vimWjtjSA2000yucVt7nA3eLFP5v/033d+0c+/t00GjtwSAAA=
+  </data>
+ </layer>
+ <objectgroup color="#a40002" name="spawns" width="71" height="17">
+  <object x="5444" y="1411" width="100" height="100"/>
+  <object x="5153" y="1409" width="100" height="100"/>
+  <object x="4849" y="1410" width="100" height="100"/>
+  <object x="3648" y="1412" width="100" height="100"/>
+  <object x="3352" y="1412" width="100" height="100"/>
+  <object x="3502" y="1411" width="100" height="100"/>
+  <object x="2900" y="1412" width="100" height="100"/>
+  <object x="2748" y="1411" width="100" height="100"/>
+  <object x="2599" y="1411" width="100" height="100"/>
+  <object x="2450" y="1412" width="100" height="100"/>
+  <object x="2301" y="1412" width="100" height="100"/>
+  <object x="2146" y="1412" width="100" height="100"/>
+  <object x="2001" y="1410" width="100" height="100"/>
+  <object x="1849" y="1412" width="100" height="100"/>
+  <object x="3795" y="1412" width="100" height="100"/>
+  <object x="5732" y="1411" width="100" height="100"/>
+ </objectgroup>
+ <objectgroup color="#00ff00" name="door" width="71" height="17">
+  <object x="1222" y="1032" width="254" height="536"/>
+ </objectgroup>
+</map>

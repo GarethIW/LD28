@@ -23,6 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,9 +33,9 @@ namespace Spine {
 		List<AtlasPage> pages = new List<AtlasPage>();
 		List<AtlasRegion> regions = new List<AtlasRegion>();
 
-		abstract protected AtlasPage NewAtlasPage (String path);
+		abstract protected AtlasPage NewAtlasPage (String path, ContentManager content);
 
-		public void load (StreamReader reader, String imagesDir) {
+		public void load (StreamReader reader, String imagesDir, ContentManager content) {
 			String[] tuple = new String[4];
 			AtlasPage page = null;
 			while (true) {
@@ -43,7 +44,7 @@ namespace Spine {
 				if (line.Trim().Length == 0)
 					page = null;
 				else if (page == null) {
-					page = NewAtlasPage(Path.Combine(imagesDir, line));
+					page = NewAtlasPage(Path.Combine(imagesDir, Path.GetFileNameWithoutExtension(line)), content);
 
 					page.Format = (Format)Enum.Parse(typeof(Format), readValue(reader), false);
 

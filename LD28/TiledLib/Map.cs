@@ -344,7 +344,7 @@ namespace TiledLib
             TileLayer tileLayer = layer as TileLayer;
             if (tileLayer != null)
             {
-                Rectangle worldArea = new Rectangle((int)gameCamera.Position.X - (gameCamera.Width), (int)gameCamera.Position.Y - (int)(gameCamera.Height*1.5), gameCamera.Width *2, gameCamera.Height*3);
+                Rectangle worldArea = new Rectangle((int)gameCamera.Position.X - (gameCamera.Width+200), (int)gameCamera.Position.Y - (int)(gameCamera.Height*1.5), (gameCamera.Width *2)+400, gameCamera.Height*3);
 
                 // figure out the min and max tile indices to draw
                 int minX = Math.Max((int)Math.Floor((float)worldArea.Left / TileWidth), 0);
@@ -358,8 +358,8 @@ namespace TiledLib
                 {
                     for (int y = minY; y < maxY; y++)
                     {
-                        if ((new Vector2((x * TileWidth) + (TileWidth/2), (y * TileHeight) + (TileHeight/2)) - new Vector2(worldArea.Center.X, worldArea.Center.Y)).Length() < gameCamera.Width * 0.75)
-                        {
+                        //if ((new Vector2((x * TileWidth) + (TileWidth/2), (y * TileHeight) + (TileHeight/2)) - new Vector2(worldArea.Center.X, worldArea.Center.Y)).Length() < gameCamera.Width * 3f)
+                        //{
                             Tile tile = tileLayer.Tiles[x, y];
 
                             if (tile == null)
@@ -369,7 +369,7 @@ namespace TiledLib
 
 
                             spriteBatch.Draw(tile.Texture, r, tile.Source, color);
-                        }
+                        //}
 
                     }
                 }

@@ -44,7 +44,7 @@ namespace Spine {
 			effect.World = Matrix.Identity;
 			effect.View = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Up);
 			effect.TextureEnabled = true;
-			effect.VertexColorEnabled = true;
+            effect.VertexColorEnabled = true;
 
 			rasterizerState = new RasterizerState();
 			rasterizerState.CullMode = CullMode.None;
@@ -52,15 +52,16 @@ namespace Spine {
 			Bone.yDown = true;
 		}
 
-		public void Begin (Matrix cameraMatrix) {
+		public void Begin (GraphicsDevice gd, Matrix cameraMatrix) {
 			device.RasterizerState = rasterizerState;
-			device.BlendState = BlendState.AlphaBlend;
+            device.BlendState = BlendState.NonPremultiplied;
 
-			effect.Projection = Matrix.CreateOrthographicOffCenter(0, device.Viewport.Width, device.Viewport.Height, 0, 1, 0);
+			effect.Projection = Matrix.CreateOrthographicOffCenter(0, gd.Viewport.Width, gd.Viewport.Height, 0, 1, 0);
             effect.View = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Up) * cameraMatrix;
 		}
 
 		public void End () {
+           
 			foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
 				pass.Apply();
 				batcher.Draw(device);
@@ -80,26 +81,15 @@ namespace Spine {
 					SpriteBatchItem item = batcher.CreateBatchItem();
 					item.Texture = ((XnaAtlasPage)regionAttachment.Region.Page).Texture;
 
-					byte r = (byte)(slot.R * 255);
-					byte g = (byte)(slot.G * 255);
-					byte b = (byte)(slot.B * 255);
-					byte a = (byte)(slot.A * 255);
-					item.vertexTL.Color.R = r;
-					item.vertexTL.Color.G = g;
-					item.vertexTL.Color.B = b;
-					item.vertexTL.Color.A = a;
-					item.vertexBL.Color.R = r;
-					item.vertexBL.Color.G = g;
-					item.vertexBL.Color.B = b;
-					item.vertexBL.Color.A = a;
-					item.vertexBR.Color.R = r;
-					item.vertexBR.Color.G = g;
-					item.vertexBR.Color.B = b;
-					item.vertexBR.Color.A = a;
-					item.vertexTR.Color.R = r;
-					item.vertexTR.Color.G = g;
-					item.vertexTR.Color.B = b;
-					item.vertexTR.Color.A = a;
+
+                    item.vertexTL.Color = new Color(slot.R, slot.G, slot.B, slot.A);
+
+                    item.vertexBL.Color = new Color(slot.R, slot.G, slot.B, slot.A);
+
+                    item.vertexBR.Color = new Color(slot.R, slot.G, slot.B, slot.A);
+
+                    item.vertexTR.Color = new Color(slot.R, slot.G, slot.B, slot.A);
+
 
 					regionAttachment.UpdateVertices(slot.Bone);
 					float[] vertices = regionAttachment.Vertices;
