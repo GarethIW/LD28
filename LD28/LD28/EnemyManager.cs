@@ -84,7 +84,7 @@ namespace LD28
                 Enemies.Add(d);
             }
 
-            d = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 280f, 605f), false);
+            d = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 380f, 605f), false);
             d.Tint = Color.Navy;
             d.faceDir = 1;
             d.Scale = 2f;

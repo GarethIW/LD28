@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="60" height="8" tilewidth="100" tileheight="100">
+<map version="1.0" orientation="orthogonal" width="65" height="8" tilewidth="100" tileheight="100">
  <tileset firstgid="1" name="PlaneInner-Seating" tilewidth="100" tileheight="100">
   <image source="PlaneInner-Seating.png" width="1200" height="600"/>
  </tileset>
  <tileset firstgid="73" name="PlaneInner-FirstClass" tilewidth="100" tileheight="100">
   <image source="PlaneInner-FirstClass.png" width="1200" height="600"/>
  </tileset>
- <layer name="internal" width="60" height="8">
+ <tileset firstgid="145" name="PlaneInner-Cockpit" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Cockpit.png" width="1200" height="600"/>
+ </tileset>
+ <tileset firstgid="217" name="PlaneInner-Partition" tilewidth="100" tileheight="100">
+  <image source="PlaneInner-Partition.png" width="300" height="600"/>
+ </tileset>
+ <layer name="internal" width="65" height="8">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+XP2TOVAQDG4VNaSIgWKclSIhWypLK02VKRFK3GTk0RySBxNJIi/7LHzHdxLs65/i7OO/Pc/W7eSCS5doCDpHCIwxzhKKmkcYx0jofYd/KYLp7wlGd008NzenkRNH0J/maQSRYnyCaHk5ziNGfI5WyI/Ute0c8Ar3nDW97xng8MBk00RuzyOMd58rlAARcppIhiSrgUYj/EMCOMMsY4E0wyxUc+BU00jv1dppQrlFHOVSq4xnVuUElViP1nvjDNDF+ZZY5vzPOdhaCJ93dfNTepoZY66rlFA7e5w10aQ+wXWWKZH6zwk1XWgi/r/AqaRH+baKaFe9znAQ95RCtttNMRYr/Bbzb5wxZ/+cc2O/xnN2jiScbtATo7z1mABwAA
+   H4sIAAAAAAAAC+XRRatVYRQG4GN3d3d3d3cXdmEXdmEXdqHXmthObCe2E9uJeo2J3fkrfC5s4fNYBwUnLnhm77vY69tJsVgsKc7/OFt/4xGPeUIqUpOGtKQjPRnISCYyk4Wscd1E8uH+sNuJznShK93oTg960ove9IkyYXdLdEfK/93Gdnawk13BO+z5hac84znZyE4OcpKL3OQhL/nITwEKxnUTyYf7w25f+tGfAQxkEIMZwlCGMTzKhN3d0R172cd+DnCQQ8EbHPmFF7zkFYUoTBGKUozilKAkpShNGcrGdRPJh/vD7ghGMorRjGEs4xjPBCYyKcqE3cPRHUc5xnFOcJJTsW/nzE+85g1vKUd5KlCRSlSmClWpRnVqUDOum0g+3B92JzOFqUxjOjOYySxmM4e5USbsno7uOMs5znOBi1yKfT9XfuAd7/lALWpTh7rUoz4NaEgjGtOEpnHdRPLh/rA7j/ksYCGLWMwSlrKM5ayIMmH3cnTHVa5xnRvc5NYP3iBl7sT5yCc+04zmtKAlrWhNG9rSjvZ0oGNcN5F8uD/srmQVq1nDWtaxng1sZBObo0zYvR3dcZdk7nGfBzz8yRv87ST/oa/f9q/nC323picgCAAA
   </data>
  </layer>
- <objectgroup color="#a40002" name="spawns" width="60" height="8">
+ <objectgroup color="#a40002" name="spawns" width="65" height="8">
   <object x="4844" y="511" width="100" height="100"/>
   <object x="4553" y="509" width="100" height="100"/>
   <object x="4249" y="510" width="100" height="100"/>
-  <object x="4099" y="514" width="100" height="100"/>
-  <object x="3951" y="512" width="100" height="100"/>
   <object x="3801" y="511" width="100" height="100"/>
   <object x="3652" y="509" width="100" height="100"/>
   <object x="3501" y="509" width="100" height="100"/>
@@ -24,8 +28,6 @@
   <object x="3048" y="512" width="100" height="100"/>
   <object x="2752" y="512" width="100" height="100"/>
   <object x="2902" y="511" width="100" height="100"/>
-  <object x="2599" y="514" width="100" height="100"/>
-  <object x="2451" y="517" width="100" height="100"/>
   <object x="2300" y="512" width="100" height="100"/>
   <object x="2148" y="511" width="100" height="100"/>
   <object x="1999" y="511" width="100" height="100"/>
@@ -34,13 +36,7 @@
   <object x="1546" y="512" width="100" height="100"/>
   <object x="1401" y="510" width="100" height="100"/>
   <object x="1249" y="512" width="100" height="100"/>
-  <object x="1099" y="511" width="100" height="100"/>
-  <object x="950" y="514" width="100" height="100"/>
-  <object x="802" y="510" width="100" height="100"/>
-  <object x="652" y="511" width="100" height="100"/>
-  <object x="500" y="513" width="100" height="100"/>
-  <object x="353" y="510" width="100" height="100"/>
-  <object x="202" y="512" width="100" height="100"/>
   <object x="3195" y="512" width="100" height="100"/>
+  <object x="5132" y="511" width="100" height="100"/>
  </objectgroup>
 </map>

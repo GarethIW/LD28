@@ -117,10 +117,10 @@ namespace LD28
             itemManager = new ItemManager();
             itemManager.LoadContent(Content, GraphicsDevice);
 
-            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 550f, 500f));
+            itemManager.SpawnWorld(ItemType.Chute, ItemName.Chute, new Vector2((gameMap.Width * gameMap.TileWidth) - 650f, 500f));
 
             //pilot = new Dude(new Vector2(100,100), true);
-            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 300f, 610f), true);
+            pilot = new Dude(new Vector2((gameMap.Width * gameMap.TileWidth) - 400f, 610f), true);
             pilot.Scale = 2f;
             pilot.LoadContent(Content, GraphicsDevice);
 
