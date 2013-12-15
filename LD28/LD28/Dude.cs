@@ -244,7 +244,7 @@ namespace LD28
                 Active = false;
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
                 Animations["panic"].Mix(skeleton, animTime, true, 0.3f);
-                Position.Y -= 20f;
+                Position.Y -= (HasParachute?30f:20f);
                 if(!IsPlayer) Position.X += fallSpeedX;
             }
 

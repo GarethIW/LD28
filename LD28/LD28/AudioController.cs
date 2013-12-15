@@ -36,6 +36,8 @@ namespace LD28
             effects = new Dictionary<string, SoundEffect>();
 
             effects.Add("explode", content.Load<SoundEffect>("sfx/explode"));
+            effects.Add("door", content.Load<SoundEffect>("sfx/door"));
+            effects.Add("splat", content.Load<SoundEffect>("sfx/splat"));
 
 
 
