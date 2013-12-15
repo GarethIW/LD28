@@ -38,7 +38,7 @@ namespace LD28
             sourceDict.Add("crowbar", new Rectangle(2, 151, 50, 19));
             sourceDict.Add("laserpistol", new Rectangle(54, 206, 46, 28));
             sourceDict.Add("axe", new Rectangle(2, 2, 77, 77));
-            sourceDict.Add("chute", new Rectangle(99,96,23,48));
+            sourceDict.Add("chute", new Rectangle(99, 154, 23, 48));
         }
 
         public void Update(GameTime gameTime, Camera gameCamera, Map gameMap, Dude gameHero, float planeRot)

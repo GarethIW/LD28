@@ -27,6 +27,7 @@ namespace LD28
         static Random rand = new Random();
 
         public bool IsPlayer = false;
+        public bool IsCoPilot = false;
 
         public Vector2 Position;
         public Vector2 Speed;
@@ -137,55 +138,56 @@ namespace LD28
             skeleton.SetSkin("default");
             skeleton.SetSlotsToBindPose();
 
-          
+            Color topColor = Color.Navy;
+            Color bottomColor = Color.Navy;
+            Color shoesColor = Color.DarkGray;
+            Vector3 skinColor = SkinTone().ToVector3();
+            Vector3 hairColor = HairColor().ToVector3();
 
-            Animations.Add("walk", skeleton.Data.FindAnimation("walk"));
-            Animations.Add("punch-hold", skeleton.Data.FindAnimation("punch-hold"));
-            Animations.Add("punch-release", skeleton.Data.FindAnimation("punch-release"));
-            Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
-            Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
-            Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
-            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
-
-
-            skeleton.RootBone.X = Position.X;
-            skeleton.RootBone.Y = Position.Y;
-            skeleton.RootBone.ScaleX = Scale;
-            skeleton.RootBone.ScaleY = Scale;
-
-            skeleton.UpdateWorldTransform();
-
-
-            //ItemManager.Instance.Spawn(this);
-
-            skeleton.SetAttachment("melee-item", null);
-            skeleton.SetAttachment("chute", null);
-
-            HasParachute = false;
-
-            //skeleton.FindSlot("fist-item").A = 0f;
-        }
-
-        public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
-        {
-            //blankTex = bt;
-            skeletonRenderer =sr;
-
-            SkeletonJson skjson = new SkeletonJson(atlas);
-            skeleton = new Skeleton(skjson.readSkeletonData("robo", json));
-
-            Tint = new Color(0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f));
-            skeleton.R = Tint.ToVector3().X;
-            skeleton.G = Tint.ToVector3().Y;
-            skeleton.B = Tint.ToVector3().Z;
 
             foreach (Slot s in skeleton.Slots)
             {
-                if (s.Data.Name != "melee-item" && s.Data.Name != "projectile-item" && s.Data.Name != "chute")
+                if (s.Data.Name == "torso" ||
+                    s.Data.Name == "arm-back-upper" ||
+                    s.Data.Name == "arm-back-lower" ||
+                    s.Data.Name == "arm-upper" ||
+                    s.Data.Name == "arm-lower")
                 {
-                    s.Data.R = skeleton.R;
-                    s.Data.G = skeleton.G;
-                    s.Data.B = skeleton.B;
+                    s.Data.R = topColor.R;
+                    s.Data.G = topColor.G;
+                    s.Data.B = topColor.B;
+                }
+
+                if (s.Data.Name == "leg-left" ||
+                    s.Data.Name == "leg-right")
+                {
+                    s.Data.R = bottomColor.R;
+                    s.Data.G = bottomColor.G;
+                    s.Data.B = bottomColor.B;
+                }
+
+                if (s.Data.Name == "foot-left" ||
+                    s.Data.Name == "foot-right")
+                {
+                    s.Data.R = shoesColor.R;
+                    s.Data.G = shoesColor.G;
+                    s.Data.B = shoesColor.B;
+                }
+
+                if (s.Data.Name == "head" ||
+                    s.Data.Name == "hand" ||
+                    s.Data.Name == "hand-copy")
+                {
+                    s.Data.R = skinColor.X;
+                    s.Data.G = skinColor.Y;
+                    s.Data.B = skinColor.Z;
+                }
+
+                if (s.Data.Name == "hair")
+                {
+                    s.Data.R = hairColor.X;
+                    s.Data.G = hairColor.Y;
+                    s.Data.B = hairColor.Z;
                 }
             }
 
@@ -207,12 +209,150 @@ namespace LD28
             skeleton.UpdateWorldTransform();
 
             skeleton.SetAttachment("melee-item", null);
+            skeleton.SetAttachment("hat", (IsCoPilot || IsPlayer) ? "Pilot-Hat" : null);
+            skeleton.SetAttachment("hair", (Helper.Random.Next(2) == 0 ? "Hair-Male" : "Hair-Female"));
+            skeleton.SetAttachment("chute", null);
+
+            HasParachute = false;
+
+            //skeleton.FindSlot("fist-item").A = 0f;
+        }
+
+        public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
+        {
+            //blankTex = bt;
+            skeletonRenderer =sr;
+
+            SkeletonJson skjson = new SkeletonJson(atlas);
+            skeleton = new Skeleton(skjson.readSkeletonData("robo", json));
+
+            //skeleton.R = Tint.ToVector3().X;
+            //skeleton.G = Tint.ToVector3().Y;
+            //skeleton.B = Tint.ToVector3().Z;
+
+            Vector3 topColor = ClothesTint().ToVector3();
+            Vector3 bottomColor = ClothesTint().ToVector3();
+            Vector3 shoesColor = ClothesTint().ToVector3();
+            Vector3 skinColor = SkinTone().ToVector3();
+            Vector3 hairColor = HairColor().ToVector3();
+
+            if (IsCoPilot)
+            {
+                topColor = Color.Blue.ToVector3();
+                bottomColor = Color.Blue.ToVector3();
+                shoesColor = Color.DarkGray.ToVector3();
+            }
+           
+
+            foreach (Slot s in skeleton.Slots)
+            {
+                if (s.Data.Name == "torso" ||
+                    s.Data.Name=="arm-back-upper"  ||
+                    s.Data.Name == "arm-back-lower" ||
+                    s.Data.Name== "arm-upper" ||
+                    s.Data.Name =="arm-lower") 
+                {
+                    s.Data.R = topColor.X;
+                    s.Data.G = topColor.Y;
+                    s.Data.B = topColor.Z;
+                }
+
+                if (s.Data.Name == "leg-left" ||
+                    s.Data.Name == "leg-right")
+                {
+                    s.Data.R = bottomColor.X;
+                    s.Data.G = bottomColor.Y;
+                    s.Data.B = bottomColor.Z;
+                }
+
+                if (s.Data.Name == "foot-left" ||
+                    s.Data.Name == "foot-right")
+                {
+                    s.Data.R = shoesColor.X;
+                    s.Data.G = shoesColor.Y;
+                    s.Data.B = shoesColor.Z;
+                }
+
+                if (s.Data.Name == "head" ||
+                    s.Data.Name == "hand" ||
+                    s.Data.Name == "hand-copy")
+                {
+                    s.Data.R = skinColor.X;
+                    s.Data.G = skinColor.Y;
+                    s.Data.B = skinColor.Z;
+                }
+
+                if (s.Data.Name == "hair")
+                {
+                    s.Data.R = hairColor.X;
+                    s.Data.G = hairColor.Y;
+                    s.Data.B = hairColor.Z;
+                }
+            }
+
+            
+
+            
+
+            skeleton.SetSkin("default");
+            skeleton.SetSlotsToBindPose();
+            Animations.Add("walk", skeleton.Data.FindAnimation("walk"));
+            Animations.Add("punch-hold", skeleton.Data.FindAnimation("punch-hold"));
+            Animations.Add("punch-release", skeleton.Data.FindAnimation("punch-release"));
+            Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
+            Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
+            Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
+            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
+
+            skeleton.RootBone.X = Position.X;
+            skeleton.RootBone.Y = Position.Y;
+            skeleton.RootBone.ScaleX = Scale;
+            skeleton.RootBone.ScaleY = Scale;
+
+            skeleton.UpdateWorldTransform();
+
+            skeleton.SetAttachment("melee-item", null);
+            skeleton.SetAttachment("hat", (IsCoPilot||IsPlayer)?"Pilot-Hat":null);
+            skeleton.SetAttachment("hair", (Helper.Random.Next(2)==0?"Hair-Male":"Hair-Female"));
             skeleton.SetAttachment("chute", null);
             //skeleton.FindSlot("fist-item").A = 0f;
 
             HasParachute = false;
 
             State = AIState.Panic;
+        }
+
+        Color ClothesTint()
+        {
+            return new Color(0.1f + ((float)rand.NextDouble() * 0.9f), 0.1f + ((float)rand.NextDouble() * 0.9f), 0.1f + ((float)rand.NextDouble() * 0.9f));
+        }
+
+        Color SkinTone()
+        {
+            Color light = new Color(251,216,197);
+            Color dark = new Color(81,40,17);
+
+            return Color.Lerp(light,dark,Helper.RandomFloat(0f,1f));
+        }
+
+        Color HairColor()
+        {
+            List<Color> lightColors = new List<Color>();
+            List<Color> darkColors = new List<Color>();
+
+            lightColors.Add(new Color(36,51,100));
+            darkColors.Add(new Color(144,1,1));
+            lightColors.Add(new Color(180,110,0));
+            darkColors.Add(new Color(92,52,0));
+            lightColors.Add(new Color(255,238,143));
+            darkColors.Add(new Color(131,117,1));
+            lightColors.Add(new Color(63,63,63));
+            darkColors.Add(new Color(15,15,15));
+            lightColors.Add(new Color(210,210,210));
+            darkColors.Add(new Color(140,120,120));
+
+            int mainColor = Helper.Random.Next(5);
+            return Color.Lerp(lightColors[mainColor], darkColors[mainColor], Helper.RandomFloat(0f, 1f));
         }
 
         public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot, bool doorOpen)
