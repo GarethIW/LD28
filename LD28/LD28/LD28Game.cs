@@ -58,6 +58,7 @@ namespace LD28
         SoundEffectInstance sfxWind;
         Texture2D texBlank;
         Texture2D texDoor;
+        Texture2D texGradient;
         SpriteFont fontAltitude;
 
         KeyboardState lks;
@@ -76,6 +77,10 @@ namespace LD28
         float planeRotTarget;
 
         int planeAltitude = 35000;
+
+        float gradHeight = 0f;
+        float outroCameraOffset = 0f;
+        float outroCameraRot = 0f;
 
         float planeFloorHight = 1510f;
 
@@ -119,6 +124,7 @@ namespace LD28
 
             texBlank = Content.Load<Texture2D>("blank");
             texDoor = Content.Load<Texture2D>("door");
+            texGradient = Content.Load<Texture2D>("skygradient");
             fontAltitude = Content.Load<SpriteFont>("altfont");
 
             speechBubble = new Speechbubble(Content);
@@ -167,6 +173,7 @@ namespace LD28
                             if (planeRotTarget < 0f) planeRotTarget = 0f;
 
                         planeAltitude -= 1 + (int)(-50f * planeRot);
+                        gradHeight = ((texGradient.Height - GraphicsDevice.Viewport.Height) / 35000f) * (35000f - (float)planeAltitude);
 
                         planeRot = (float)MathHelper.Lerp(planeRot, planeRotTarget, 0.01f);
                         pilot.Update(gameTime, gameMap, pilot, planeRot, (doorOpen && doorFrame == 3));
@@ -201,10 +208,34 @@ namespace LD28
 
                         if (!pilot.IsInPlane)
                         {
+                            if (pilot.Position.Y < -400) outroCameraRot = MathHelper.Lerp(outroCameraRot, 0f, 0.1f);
+                            else outroCameraRot = planeRot;
+
                             sfxWind.Play();
                             if (sfxPanic.Volume > 0f) sfxPanic.Volume = MathHelper.Clamp(sfxPanic.Volume - 0.01f, 0f, 1f);
-                            if (sfxEngine.Volume > 0f) sfxEngine.Volume -= MathHelper.Clamp(sfxEngine.Volume - 0.01f, 0f, 1f);
-                            if (sfxWind.Volume < 1f) sfxWind.Volume += MathHelper.Clamp(sfxWind.Volume - 0.01f, 0f, 1f);
+                            if (sfxEngine.Volume > 0f) sfxEngine.Volume = MathHelper.Clamp(sfxEngine.Volume - 0.01f, 0f, 1f);
+                            if (sfxWind.Volume < 1f) sfxWind.Volume = MathHelper.Clamp(sfxWind.Volume + 0.01f, 0f, 1f);
+
+                            //if (sfxWind.Volume == 1f) gameState = GameState.Outro;
+                            planeRotTarget = -0.5f;
+                            //planeRot = (float)MathHelper.Lerp(planeRot, planeRotTarget, 0.01f);
+                            //planeAltitude -= 1 + (int)(-50f * planeRot);
+                            //gradHeight = ((texGradient.Height - GraphicsDevice.Viewport.Height) / 35000f) * (35000f - (float)planeAltitude);
+                            if (planeAltitude <= 0)
+                            {
+                                if (outroCameraOffset > -100f)
+                                {
+                                    outroCameraOffset -= (pilot.HasParachute?5f:20f);
+                                }
+                                else
+                                {
+                                    if (!pilot.HasParachute) fadingWhite = true;
+                                    else currentFade = Color.Black * 0f;
+                                    introTimer = 0;
+                                    gameState = GameState.Outro;
+                                    sfxWind.Stop();
+                                }
+                            }
                         }
 
                         break;
@@ -271,43 +302,79 @@ namespace LD28
                         break;
 #endregion
                     case GameState.Outro:
-                        if (planeAltitude == 0)
+                        if (planeAltitude <= 0)
                         {
-                            if (fadingWhite)
+                            if (pilot.HasParachute)
                             {
-                                currentFade = Color.Lerp(currentFade, Color.White * 1f, 0.1f);
-                                if (currentFade.A > 230) fadingWhite = false;
+                                introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                                if (introTimer > 2000)
+                                {
+                                    currentFade = Color.Lerp(currentFade, Color.Black * 1f, 0.05f);
+                                    if (currentFade.R < 30 && currentFade.A > 230)
+                                    {
+                                        currentFade = Color.Black * 1f;
+                                        introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                                        if (introTimer >= 3000) Reset();
+                                    }
+                                }
                             }
                             else
                             {
-                                currentFade = Color.Lerp(currentFade, Color.Black * 1f, 0.05f);
-                                if (currentFade.R < 30)
+                                if (fadingWhite)
                                 {
-                                    currentFade = Color.Black * 1f;
-                                    introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-                                    if (introTimer >= 5000) Reset();
+                                    currentFade = Color.Lerp(currentFade, Color.White * 1f, 0.1f);
+                                    if (currentFade.A > 230) fadingWhite = false;
                                 }
+                                else
+                                {
+                                    currentFade = Color.Lerp(currentFade, Color.Black * 1f, 0.05f);
+                                    if (currentFade.R < 30 && currentFade.A > 230)
+                                    {
+                                        currentFade = Color.Black * 1f;
+                                        introTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                                        if (introTimer >= 5000) Reset();
+                                    }
 
+                                }
                             }
+                        }
+                        if (!pilot.IsInPlane)
+                        {
+                            
                         }
                         break;
                 }
 
-
+                
                 if (Helper.Random.Next(10) == 0)
                 {
                     float zindex = Helper.RandomFloat(0f, 1f);
-                    particleManager.Add(ParticleType.Cloud,
-                                        new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width / 2), Helper.RandomFloat(700f, (gameMap.Height * gameMap.TileHeight))),
-                                        new Vector2(-zindex * (20f), -0.1f + planeRot),
-                                        30000f * (1f - zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
+                    if (planeAltitude > 1000)
+                    {
+                        if (pilot.IsInPlane)
+                        {
+                            particleManager.Add(ParticleType.Cloud,
+                                                new Vector2((gameMap.Width * gameMap.TileWidth) + (GraphicsDevice.Viewport.Width / 2), Helper.RandomFloat(700f, (gameMap.Height * gameMap.TileHeight))),
+                                                new Vector2(-zindex * (20f), -0.1f + planeRot),
+                                                30000f * (1f - zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
+                        }
+                        else
+                        {
+                            particleManager.Add(ParticleType.Cloud,
+                                                new Vector2(Helper.RandomFloat(pilot.Position.X - (GraphicsDevice.Viewport.Width / 2), pilot.Position.X + (GraphicsDevice.Viewport.Width / 2)), pilot.Position.Y + 400f),
+                                                new Vector2(0f, (pilot.HasParachute?-25f:-40f) - zindex * (20f)),
+                                                30000f * (1f - zindex), false, new Rectangle(0, 0, 400, 200), 0f, Color.White, zindex);
+                        }
+                    }
                 }
 
-                gameCamera.Rotation = planeRot;
-                gameCamera.Target = pilot.Position;// -new Vector2(GraphicsDevice.Viewport.Width / 2, 550f);
+                gradHeight = MathHelper.Clamp(gradHeight, 0f, (texGradient.Height - GraphicsDevice.Viewport.Height));
+
+                gameCamera.Rotation = pilot.IsInPlane ? planeRot : outroCameraRot;
+                gameCamera.Target = pilot.Position + new Vector2(0f,outroCameraOffset);// -new Vector2(GraphicsDevice.Viewport.Width / 2, 550f);
                 gameCamera.Update(gameTime);
 
-                particleManager.Update(gameTime, gameMap, planeRot);
+                particleManager.Update(gameTime, gameMap, pilot.IsInPlane?planeRot:0f);
                 itemManager.Update(gameTime, gameCamera, gameMap, pilot, planeRot);
 
                 sfxEngine.Pitch = MathHelper.Clamp(-0.5f + ((-planeRot) * 8f), -1f, 1f);
@@ -350,6 +417,10 @@ namespace LD28
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(texGradient, new Rectangle(0,-(int)gradHeight,GraphicsDevice.Viewport.Width,texGradient.Height), Color.White);
+            spriteBatch.End();
 
             particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera,0f,0.9f);
 
@@ -413,12 +484,12 @@ namespace LD28
 
             gameCamera.Position = pilot.Position;
 
-            sfxEngine.Stop();
+            //sfxEngine.Stop();
             sfxPanic.Stop();
             sfxWind.Stop();
             sfxPanic.Volume = 0.4f;
             sfxEngine.Volume = 1f;
-            sfxWind.Volume = 1f;
+            sfxWind.Volume = 0f;
             sfxEngine.Play();
 
             gameState = GameState.Intro;
@@ -426,7 +497,13 @@ namespace LD28
             introTimer = 0;
 
             planeRot = 0f;
+            planeRotTarget = 0f;
             planeAltitude = 35000;
+            gradHeight = 0f;
+            outroCameraOffset = 0f;
+
+            doorOpen = false;
+            doorFrame = 0;
         }
     }
 }

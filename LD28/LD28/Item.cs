@@ -81,7 +81,7 @@ namespace LD28
                 Position.X -= (planeRot * 2f);
                 Position.Y += Speed.Y;
 
-                Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
+                Position.X = MathHelper.Clamp(Position.X, 1150, gameMap.Width * gameMap.TileWidth - 400f);
                 Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
             }
 

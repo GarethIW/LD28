@@ -230,9 +230,9 @@ namespace LD28
                 Active = false;
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
                 Animations["knockback"].Mix(skeleton, animTime, true, 0.3f);
-                if (Position.X > 750f) Position.X -= 40f;
-                if (Position.X < 750f) Position.X += 40f;
-                if (Position.X > 650f && Position.X < 850f)
+                if (Position.X > 1350f) Position.X -= 40f;
+                if (Position.X < 1350f) Position.X += 40f;
+                if (Position.X > 1250f && Position.X < 1450f)
                 {
                     IsInPlane = false;
                     fallSpeedX = Helper.RandomFloat(-20f, 0f);
@@ -245,7 +245,7 @@ namespace LD28
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
                 Animations["panic"].Mix(skeleton, animTime, true, 0.3f);
                 Position.Y -= 20f;
-                Position.X += fallSpeedX;
+                if(!IsPlayer) Position.X += fallSpeedX;
             }
 
             if (Active)
@@ -394,7 +394,7 @@ namespace LD28
                     {
                         ChuteItem.InWorld = true;
                         ChuteItem.DroppedPosition = Position;
-                        ChuteItem.Position = Position + new Vector2(0, -200);
+                        ChuteItem.Position = Position + new Vector2(0, -100);
                         ChuteItem.Speed = new Vector2(0f,0.1f);
                         ChuteItem = null;
                         HasParachute = false;
@@ -571,14 +571,27 @@ namespace LD28
                 {
                     ChuteItem.InWorld = true;
                     ChuteItem.DroppedPosition = Position;
-                    ChuteItem.Position = Position + new Vector2(0, -200);
+                    ChuteItem.Position = Position + new Vector2(0, -100);
                     ChuteItem.Speed = new Vector2(0f, 0.1f);
                     ChuteItem = null;
                     HasParachute = false;
+                    
                 }
 
-                animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
-                Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                if (!IsInPlane)
+                {
+                    if (!HasParachute)
+                    {
+                        animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+                        Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                    }
+                    else Animations["walk"].Apply(skeleton, 0f, true);
+                }
+                else
+                {
+                    animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+                    Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                }
 
                 deadTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
                 //if (deadTime > 0 && deadTime<1000)
@@ -631,7 +644,7 @@ namespace LD28
                 Position.X -= (planeRot * 10f);
                 targetPosition.X -= (planeRot * 10f);
 
-                Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
+                Position.X = MathHelper.Clamp(Position.X, 1150, gameMap.Width * gameMap.TileWidth-400f);
                 Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
             }
 
