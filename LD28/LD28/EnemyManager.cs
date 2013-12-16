@@ -109,7 +109,7 @@ namespace LD28
                         numHits++;
                         if (numHits <= maxHits)
                             r.DoHit(pos, power, faceDir, attacker);
-                        mindist = (r.Position - pos).Length();
+                        //mindist = (r.Position - pos).Length();
                         
                     }
                 }
