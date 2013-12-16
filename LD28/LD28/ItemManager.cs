@@ -13,6 +13,7 @@ namespace LD28
 {
     class ItemManager
     {
+        const int NUM_WEAPONS = 2;
         public List<Item> Items = new List<Item>();
 
         public static ItemManager Instance;
@@ -35,10 +36,9 @@ namespace LD28
 
             skeletonRenderer = new SkeletonRenderer(graphicsDevice);
 
-            sourceDict.Add("crowbar", new Rectangle(2, 151, 50, 19));
-            sourceDict.Add("laserpistol", new Rectangle(54, 206, 46, 28));
-            sourceDict.Add("axe", new Rectangle(2, 2, 77, 77));
-            sourceDict.Add("chute", new Rectangle(99,96,23,48));
+            sourceDict.Add("weapon0", new Rectangle(70, 91, 33, 30));
+            sourceDict.Add("weapon1", new Rectangle(2, 204, 19, 49));
+            sourceDict.Add("chute", new Rectangle(99, 154, 23, 48));
         }
 
         public void Update(GameTime gameTime, Camera gameCamera, Map gameMap, Dude gameHero, float planeRot)
@@ -57,7 +57,7 @@ namespace LD28
         public void Draw(GraphicsDevice gd, SpriteBatch sb, Camera gameCamera)
         {
             sb.Begin(SpriteSortMode.Deferred, null,null,null,null,null,gameCamera.CameraMatrix);
-            foreach (Item i in Items)
+            foreach (Item i in Items.OrderBy(it=>it.Type== ItemType.Chute))
             {
                   i.Draw(sb,gameCamera);
             }
@@ -70,31 +70,24 @@ namespace LD28
 
             Item newItem = null;
 
-            switch (item)
-            {
-                //case 0:
-                //    // crowbar
-                //    newItem = new Crowbar(itemTex, sourceDict["crowbar"]);
-                //    break;
-                //case 1:
-                //    // laserpistol
-                //    newItem = new LaserPistol(itemTex, sourceDict["laserpistol"]);
-                //    break;
-                //case 2:
-                //    // axe
-                //    newItem = new Axe(itemTex, sourceDict["axe"]);
-                //    break;
-            }
-
             newItem = new Item(type, name, itemTex, sourceDict[type.ToString().ToLower()]);
             newItem.Owner = owner;
             owner.Item = newItem;
             Items.Add(newItem);
         }
 
+        public void SpawnRandom(int number, float floorHeight)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                int type = Helper.Random.Next(NUM_WEAPONS);
+                SpawnWorld(ItemType.Melee, (ItemName)type, new Vector2(Helper.RandomFloat(1500f, 5000f),floorHeight));
+            }
+        }
+
         internal void SpawnWorld(ItemType itemType, ItemName itemName, Vector2 pos)
         {
-            Item newItem = new Item(itemType, itemName, itemTex, sourceDict[itemType.ToString().ToLower()]);
+            Item newItem = new Item(itemType, itemName, itemTex, sourceDict[itemName.ToString().ToLower()]);
             newItem.Owner = null;
             newItem.InWorld = true;
             newItem.Position = pos;
@@ -140,7 +133,7 @@ namespace LD28
             {
                 foreach (Item i in Items.OrderBy(it => (it.Position - dude.Position).Length()))
                 {
-                    if (i.Health > 0f && !i.Dead && i.InWorld)
+                    if (i.Health > 0f && !i.Dead && i.InWorld && i.Type != ItemType.Chute)
                     {
                         if (i.Position.X > dude.Position.X - 75f && i.Position.X < dude.Position.X + 75f)
                         {
@@ -165,7 +158,7 @@ namespace LD28
 
             foreach (Item i in Items)
             {
-                if (i.Health > 0f && !i.Dead && i.InWorld)
+                if (i.Health > 0f && !i.Dead && i.InWorld && i.Type!= ItemType.Chute)
                 {
                     if ((robot.Position - i.Position).Length() < dist)
                     {

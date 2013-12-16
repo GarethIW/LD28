@@ -27,6 +27,7 @@ namespace LD28
         static Random rand = new Random();
 
         public bool IsPlayer = false;
+        public bool IsCoPilot = false;
 
         public Vector2 Position;
         public Vector2 Speed;
@@ -83,6 +84,8 @@ namespace LD28
         bool hasPickedUp = false;
         double pickupTime = 0;
 
+        int walkFrameCount = 0;
+
         float fallSpeedX;
 
         // AI stuff
@@ -137,55 +140,56 @@ namespace LD28
             skeleton.SetSkin("default");
             skeleton.SetSlotsToBindPose();
 
-          
+            Color topColor = Color.Navy;
+            Color bottomColor = Color.Navy;
+            Color shoesColor = Color.DarkGray;
+            Vector3 skinColor = SkinTone().ToVector3();
+            Vector3 hairColor = HairColor().ToVector3();
 
-            Animations.Add("walk", skeleton.Data.FindAnimation("walk"));
-            Animations.Add("punch-hold", skeleton.Data.FindAnimation("punch-hold"));
-            Animations.Add("punch-release", skeleton.Data.FindAnimation("punch-release"));
-            Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
-            Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
-            Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
-            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
-
-
-            skeleton.RootBone.X = Position.X;
-            skeleton.RootBone.Y = Position.Y;
-            skeleton.RootBone.ScaleX = Scale;
-            skeleton.RootBone.ScaleY = Scale;
-
-            skeleton.UpdateWorldTransform();
-
-
-            //ItemManager.Instance.Spawn(this);
-
-            skeleton.SetAttachment("melee-item", null);
-            skeleton.SetAttachment("chute", null);
-
-            HasParachute = false;
-
-            //skeleton.FindSlot("fist-item").A = 0f;
-        }
-
-        public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
-        {
-            //blankTex = bt;
-            skeletonRenderer =sr;
-
-            SkeletonJson skjson = new SkeletonJson(atlas);
-            skeleton = new Skeleton(skjson.readSkeletonData("robo", json));
-
-            Tint = new Color(0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f), 0.5f + ((float)rand.NextDouble() * 0.5f));
-            skeleton.R = Tint.ToVector3().X;
-            skeleton.G = Tint.ToVector3().Y;
-            skeleton.B = Tint.ToVector3().Z;
 
             foreach (Slot s in skeleton.Slots)
             {
-                if (s.Data.Name != "melee-item" && s.Data.Name != "projectile-item" && s.Data.Name != "chute")
+                if (s.Data.Name == "torso" ||
+                    s.Data.Name == "arm-back-upper" ||
+                    s.Data.Name == "arm-back-lower" ||
+                    s.Data.Name == "arm-upper" ||
+                    s.Data.Name == "arm-lower")
                 {
-                    s.Data.R = skeleton.R;
-                    s.Data.G = skeleton.G;
-                    s.Data.B = skeleton.B;
+                    s.Data.R = topColor.R;
+                    s.Data.G = topColor.G;
+                    s.Data.B = topColor.B;
+                }
+
+                if (s.Data.Name == "leg-left" ||
+                    s.Data.Name == "leg-right")
+                {
+                    s.Data.R = bottomColor.R;
+                    s.Data.G = bottomColor.G;
+                    s.Data.B = bottomColor.B;
+                }
+
+                if (s.Data.Name == "foot-left" ||
+                    s.Data.Name == "foot-right")
+                {
+                    s.Data.R = shoesColor.R;
+                    s.Data.G = shoesColor.G;
+                    s.Data.B = shoesColor.B;
+                }
+
+                if (s.Data.Name == "head" ||
+                    s.Data.Name == "hand" ||
+                    s.Data.Name == "hand-copy")
+                {
+                    s.Data.R = skinColor.X;
+                    s.Data.G = skinColor.Y;
+                    s.Data.B = skinColor.Z;
+                }
+
+                if (s.Data.Name == "hair")
+                {
+                    s.Data.R = hairColor.X;
+                    s.Data.G = hairColor.Y;
+                    s.Data.B = hairColor.Z;
                 }
             }
 
@@ -207,12 +211,150 @@ namespace LD28
             skeleton.UpdateWorldTransform();
 
             skeleton.SetAttachment("melee-item", null);
+            skeleton.SetAttachment("hat", (IsCoPilot || IsPlayer) ? "Pilot-Hat" : null);
+            skeleton.SetAttachment("hair", (Helper.Random.Next(2) == 0 ? "Hair-Male" : "Hair-Female"));
+            skeleton.SetAttachment("chute", null);
+
+            HasParachute = false;
+
+            //skeleton.FindSlot("fist-item").A = 0f;
+        }
+
+        public void LoadContent(SkeletonRenderer sr, Atlas atlas, string json)
+        {
+            //blankTex = bt;
+            skeletonRenderer =sr;
+
+            SkeletonJson skjson = new SkeletonJson(atlas);
+            skeleton = new Skeleton(skjson.readSkeletonData("robo", json));
+
+            //skeleton.R = Tint.ToVector3().X;
+            //skeleton.G = Tint.ToVector3().Y;
+            //skeleton.B = Tint.ToVector3().Z;
+
+            Vector3 topColor = ClothesTint().ToVector3();
+            Vector3 bottomColor = ClothesTint().ToVector3();
+            Vector3 shoesColor = ClothesTint().ToVector3();
+            Vector3 skinColor = SkinTone().ToVector3();
+            Vector3 hairColor = HairColor().ToVector3();
+
+            if (IsCoPilot)
+            {
+                topColor = Color.Blue.ToVector3();
+                bottomColor = Color.Blue.ToVector3();
+                shoesColor = Color.DarkGray.ToVector3();
+            }
+           
+
+            foreach (Slot s in skeleton.Slots)
+            {
+                if (s.Data.Name == "torso" ||
+                    s.Data.Name=="arm-back-upper"  ||
+                    s.Data.Name == "arm-back-lower" ||
+                    s.Data.Name== "arm-upper" ||
+                    s.Data.Name =="arm-lower") 
+                {
+                    s.Data.R = topColor.X;
+                    s.Data.G = topColor.Y;
+                    s.Data.B = topColor.Z;
+                }
+
+                if (s.Data.Name == "leg-left" ||
+                    s.Data.Name == "leg-right")
+                {
+                    s.Data.R = bottomColor.X;
+                    s.Data.G = bottomColor.Y;
+                    s.Data.B = bottomColor.Z;
+                }
+
+                if (s.Data.Name == "foot-left" ||
+                    s.Data.Name == "foot-right")
+                {
+                    s.Data.R = shoesColor.X;
+                    s.Data.G = shoesColor.Y;
+                    s.Data.B = shoesColor.Z;
+                }
+
+                if (s.Data.Name == "head" ||
+                    s.Data.Name == "hand" ||
+                    s.Data.Name == "hand-copy")
+                {
+                    s.Data.R = skinColor.X;
+                    s.Data.G = skinColor.Y;
+                    s.Data.B = skinColor.Z;
+                }
+
+                if (s.Data.Name == "hair")
+                {
+                    s.Data.R = hairColor.X;
+                    s.Data.G = hairColor.Y;
+                    s.Data.B = hairColor.Z;
+                }
+            }
+
+            
+
+            
+
+            skeleton.SetSkin("default");
+            skeleton.SetSlotsToBindPose();
+            Animations.Add("walk", skeleton.Data.FindAnimation("walk"));
+            Animations.Add("punch-hold", skeleton.Data.FindAnimation("punch-hold"));
+            Animations.Add("punch-release", skeleton.Data.FindAnimation("punch-release"));
+            Animations.Add("knockback", skeleton.Data.FindAnimation("knockback"));
+            Animations.Add("pickup", skeleton.Data.FindAnimation("pickup"));
+            Animations.Add("knockout", skeleton.Data.FindAnimation("knockout"));
+            Animations.Add("panic", skeleton.Data.FindAnimation("panic"));
+
+            skeleton.RootBone.X = Position.X;
+            skeleton.RootBone.Y = Position.Y;
+            skeleton.RootBone.ScaleX = Scale;
+            skeleton.RootBone.ScaleY = Scale;
+
+            skeleton.UpdateWorldTransform();
+
+            skeleton.SetAttachment("melee-item", null);
+            skeleton.SetAttachment("hat", (IsCoPilot||IsPlayer)?"Pilot-Hat":null);
+            skeleton.SetAttachment("hair", (Helper.Random.Next(2)==0?"Hair-Male":"Hair-Female"));
             skeleton.SetAttachment("chute", null);
             //skeleton.FindSlot("fist-item").A = 0f;
 
             HasParachute = false;
 
             State = AIState.Panic;
+        }
+
+        Color ClothesTint()
+        {
+            return new Color(0.1f + ((float)rand.NextDouble() * 0.9f), 0.1f + ((float)rand.NextDouble() * 0.9f), 0.1f + ((float)rand.NextDouble() * 0.9f));
+        }
+
+        Color SkinTone()
+        {
+            Color light = new Color(251,216,197);
+            Color dark = new Color(81,40,17);
+
+            return Color.Lerp(light,dark,Helper.RandomFloat(0f,1f));
+        }
+
+        Color HairColor()
+        {
+            List<Color> lightColors = new List<Color>();
+            List<Color> darkColors = new List<Color>();
+
+            lightColors.Add(new Color(36,51,100));
+            darkColors.Add(new Color(144,1,1));
+            lightColors.Add(new Color(180,110,0));
+            darkColors.Add(new Color(92,52,0));
+            lightColors.Add(new Color(255,238,143));
+            darkColors.Add(new Color(131,117,1));
+            lightColors.Add(new Color(63,63,63));
+            darkColors.Add(new Color(15,15,15));
+            lightColors.Add(new Color(210,210,210));
+            darkColors.Add(new Color(140,120,120));
+
+            int mainColor = Helper.Random.Next(5);
+            return Color.Lerp(lightColors[mainColor], darkColors[mainColor], Helper.RandomFloat(0f, 1f));
         }
 
         public void Update(GameTime gameTime, Map gameMap, Dude gameHero, float planeRot, bool doorOpen)
@@ -230,9 +372,9 @@ namespace LD28
                 Active = false;
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
                 Animations["knockback"].Mix(skeleton, animTime, true, 0.3f);
-                if (Position.X > 750f) Position.X -= 40f;
-                if (Position.X < 750f) Position.X += 40f;
-                if (Position.X > 650f && Position.X < 850f)
+                if (Position.X > 1350f) Position.X -= 40f;
+                if (Position.X < 1350f) Position.X += 40f;
+                if (Position.X > 1250f && Position.X < 1450f)
                 {
                     IsInPlane = false;
                     fallSpeedX = Helper.RandomFloat(-20f, 0f);
@@ -244,8 +386,8 @@ namespace LD28
                 Active = false;
                 animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 3;
                 Animations["panic"].Mix(skeleton, animTime, true, 0.3f);
-                Position.Y -= 20f;
-                Position.X += fallSpeedX;
+                Position.Y -= (HasParachute?30f:20f);
+                if(!IsPlayer) Position.X += fallSpeedX;
             }
 
             if (Active)
@@ -346,13 +488,23 @@ namespace LD28
                     }
 
                     if (knockbackTime<0 && Vector2.Distance(targetPosition, Position) < 10f) targetPosition = Position;
-                   
+
+                    if ((State == AIState.GoingForDoor || State == AIState.GoingForParachute || State == AIState.Panic) && Item == null)
+                    {
+                        Item closest = ItemManager.Instance.ClosestItem(this);
+                        
+                        if(closest!=null && Vector2.Distance(closest.Position, Position)<50f)
+                        {
+                            Pickup();
+                        }
+                    }
                 }
 
                
 
                 if (!walking && !jumping && knockbackTime <= 0)
                 {
+                    walkFrameCount = 0;
                     Animations["walk"].Apply(skeleton, 0f, false);
                     if (!IsPlayer && State == AIState.Panic)
                     {
@@ -363,9 +515,12 @@ namespace LD28
 
                 if (walking && !jumping && knockbackTime <= 0)
                 {
-                    animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
-
-                    Animations["walk"].Mix(skeleton, animTime, true, 0.3f);
+                    walkFrameCount++;
+                    if (walkFrameCount > 5)
+                    {
+                        animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f) * 2;
+                        Animations["walk"].Mix(skeleton, animTime, true, 0.3f);
+                    }
                     if (!IsPlayer && State == AIState.Panic) Animations["panic"].Mix(skeleton, animTime, true, 0.8f);
                 }
 
@@ -378,7 +533,7 @@ namespace LD28
 
                     if (pickupTime > 150 && !hasPickedUp)
                     {
-                        //ItemManager.Instance.AttemptPickup(this);
+                        ItemManager.Instance.AttemptPickup(this);
                         hasPickedUp = true;
                     }
                     if (pickupTime >= 300)
@@ -394,10 +549,18 @@ namespace LD28
                     {
                         ChuteItem.InWorld = true;
                         ChuteItem.DroppedPosition = Position;
-                        ChuteItem.Position = Position + new Vector2(0, -200);
+                        ChuteItem.Position = Position + new Vector2(0, -50);
                         ChuteItem.Speed = new Vector2(0f,0.1f);
                         ChuteItem = null;
                         HasParachute = false;
+                    }
+                    if (Item != null)
+                    {
+                        Item.InWorld = true;
+                        Item.DroppedPosition = Position;// +new Vector2(0, -75);
+                        Item.Position = Position + new Vector2(0, -50);
+                        Item.Speed = new Vector2(0f,0.1f);
+                        Item = null;
                     }
 
                     knockbackTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -444,13 +607,13 @@ namespace LD28
 
                             
                         }
-                        //else if (Item.Type == ItemType.Melee)
-                        //{
-                           
-                        //    Animations["punch-hold"].Apply(skeleton, 1f, false);
+                        else if (Item.Type == ItemType.Melee)
+                        {
+                          
+                            Animations["punch-hold"].Apply(skeleton, 1f, false);
 
 
-                        //}
+                        }
                         //else if (Item.Type == ItemType.Projectile)
                         //{
                         //    attackCharge += 0.25f;
@@ -471,17 +634,17 @@ namespace LD28
                             {
                                 //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
                                 if (IsPlayer)
-                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
                                 else
                                 {
                                     switch (State)
                                     {
                                         case AIState.AttackingHero:
-                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 1f, faceDir, gameHero);
+                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 0f, faceDir, gameHero);
                                             State = AIState.Panic;
                                             break;
                                         case AIState.AttackingOther:
-                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 1f, attackRange, 1, gameHero);
+                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
                                             State = AIState.Panic;
                                             break;
                                     }
@@ -489,15 +652,40 @@ namespace LD28
                                 
                             }
                         }
-                        //else if (Item.Type == ItemType.Melee)
-                        //{
-                        //    if (punchReleaseTime == 0)
-                        //    {
-                        //        AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
-                        //        Item.Use(faceDir, attackCharge, gameHero);
+                        else if (Item.Type == ItemType.Melee)
+                        {
+                            if (punchReleaseTime == 0)
+                            {
+                                //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
+                                if (IsPlayer)
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                else
+                                {
+                                    //switch (State)
+                                    //{
+                                      //  case AIState.AttackingHero:
+                                    if ((Position - gameHero.Position).Length() < attackRange + (20 * ((int)Item.Name + 2)) && gameHero.IsInPlane)
+                                    {
+                                        gameHero.DoHit(Position, (float)(250 * ((int)Item.Name + 2)), faceDir, gameHero);
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
 
-                        //    }
-                        //}
+                                    }
+                                    else
+                                    {
+
+                                        //    break;
+                                        //case AIState.AttackingOther:
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                        //  State = AIState.Panic;
+                                        //break;
+                                    }
+                                            State = AIState.Panic;
+
+                                    //}
+                                }
+
+                            }
+                        }
                         //else if (Item.Type == ItemType.Projectile)
                         //{
                         //    punchReleaseTime = Item.Cooldown;
@@ -529,17 +717,7 @@ namespace LD28
                     Speed = Vector2.Zero;
                 }
 
-                //if (Item != null)
-                //{
-                //    if (fistSound.Volume > 0f) fistSound.Volume = MathHelper.Clamp(fistSound.Volume -= 0.1f, 0f, 1f);
-                //    if (fistSound.Pitch > -1f) fistSound.Pitch = MathHelper.Clamp(fistSound.Pitch - 0.1f, -0.9f, 0.9f);
-
-
-                //    if (Item.Type == ItemType.Melee)
-                //    {
-                //        skeleton.SetAttachment("melee-item", Item.Name);
-                //        skeleton.SetAttachment("projectile-item", null);
-                //    }
+                
                 //    else
                 //    {
                 //        skeleton.SetAttachment("projectile-item", Item.Name);
@@ -571,14 +749,35 @@ namespace LD28
                 {
                     ChuteItem.InWorld = true;
                     ChuteItem.DroppedPosition = Position;
-                    ChuteItem.Position = Position + new Vector2(0, -200);
+                    ChuteItem.Position = Position + new Vector2(0, -50);
                     ChuteItem.Speed = new Vector2(0f, 0.1f);
                     ChuteItem = null;
                     HasParachute = false;
+                    
+                }
+                if (Item != null)
+                {
+                    Item.InWorld = true;
+                    Item.DroppedPosition = Position;// +new Vector2(0, -75);
+                    Item.Position = Position + new Vector2(0, -50);
+                    Item.Speed = new Vector2(0f, 0.1f);
+                    Item = null;
                 }
 
-                animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
-                Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                if (!IsInPlane)
+                {
+                    if (!HasParachute)
+                    {
+                        animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+                        Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                    }
+                    else Animations["walk"].Apply(skeleton, 0f, true);
+                }
+                else
+                {
+                    animTime += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+                    Animations["knockout"].Mix(skeleton, animTime, true, 0.2f);
+                }
 
                 deadTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
                 //if (deadTime > 0 && deadTime<1000)
@@ -603,6 +802,15 @@ namespace LD28
                 }
 
             }
+
+            if (Item != null)
+            {
+                if (Item.Type == ItemType.Melee)
+                {
+                    skeleton.SetAttachment("melee-item", Item.Name.ToString().ToLower());
+                }
+            }
+            else skeleton.SetAttachment("melee-item", null);
 
             if (falling)
             {
@@ -631,7 +839,7 @@ namespace LD28
                 Position.X -= (planeRot * 10f);
                 targetPosition.X -= (planeRot * 10f);
 
-                Position.X = MathHelper.Clamp(Position.X, 0, gameMap.Width * gameMap.TileWidth);
+                Position.X = MathHelper.Clamp(Position.X, 1150, gameMap.Width * gameMap.TileWidth-400f);
                 Position.Y = MathHelper.Clamp(Position.Y, 0, gameMap.Height * gameMap.TileHeight);
             }
 
@@ -713,7 +921,7 @@ namespace LD28
 
         public void Pickup()
         {
-            if (knockbackTime > 0 || pickingUp || jumping || falling) return;
+            if (!Active || knockbackTime > 0 || pickingUp) return;
 
             animTime = 0;
             pickingUp = true;
@@ -969,7 +1177,7 @@ namespace LD28
 
                 if (knockbackTime <= 0)
                 {
-                    knockbackTime = 1000f;
+                    knockbackTime = 1000f + power;
                     faceDir = -face;
                     if (IsPlayer) knockbackTime *= 0.5;
                     Speed.X = 15f * (float)face;
@@ -986,7 +1194,7 @@ namespace LD28
             {
                 //knockbackTime = 3000f;
                 //knockbackTime = 1000f;
-                deadTime = Helper.Random.NextDouble()*5000;
+                deadTime = 1000 + Helper.Random.NextDouble()*4000;
                 faceDir = -face;
                 if (IsPlayer) knockbackTime *= 0.5;
                 Speed.X = 15f * (float)face;

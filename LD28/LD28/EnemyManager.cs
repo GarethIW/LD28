@@ -78,9 +78,9 @@ namespace LD28
             foreach (MapObject o in ((MapObjectLayer)gameMap.GetLayer("spawns")).Objects)
             {
                 d = new Dude(new Vector2(o.Location.Center.X, o.Location.Bottom), false);
-                d.LoadContent(skeletonRenderer, AtlasDict["dude"], JsonDict["dude"]);
                 d.faceDir = 1;
                 d.Scale = 2f;
+                d.LoadContent(skeletonRenderer, AtlasDict["dude"], JsonDict["dude"]);
                 Enemies.Add(d);
             }
 
@@ -88,10 +88,9 @@ namespace LD28
             d.Tint = Color.Navy;
             d.faceDir = 1;
             d.Scale = 2f;
+            d.IsCoPilot = true;
             d.LoadContent(skeletonRenderer, AtlasDict["dude"], JsonDict["dude"]);
             d.State = AIState.GoingForDoor;
-
-          
             Enemies.Add(d);
         }
 

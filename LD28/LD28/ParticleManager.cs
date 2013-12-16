@@ -59,7 +59,7 @@ namespace LD28
             //_texParticles = content.Load<Texture2D>("particles");
             _texClouds = new List<Texture2D>();
             for(int i=1;i<=10;i++)
-                _texClouds.Add(content.Load<Texture2D>("clouds/cloud-"+i.ToString("00")));
+                _texClouds.Add(content.Load<Texture2D>("clouds/Cloud-"+i.ToString("00")));
 
             for (int i = 0; i < MAX_PARTICLES; i++)
                 Particles[i] = new Particle();
