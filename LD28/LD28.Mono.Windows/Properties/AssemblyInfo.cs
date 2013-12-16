@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LD28.Mono.Windows")]
-[assembly: AssemblyProduct("LD28.Mono.Windows")]
+[assembly: AssemblyTitle("Going Down")]
+[assembly: AssemblyProduct("Going Down")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCompany("Team Mango")]
+[assembly: AssemblyCopyright("Copyright ©  2013 Team Mango")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

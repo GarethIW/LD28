@@ -60,6 +60,7 @@ namespace LD28
         Texture2D texBlank;
         Texture2D texDoor;
         Texture2D texGradient;
+        Texture2D texParachute;
         SpriteFont fontAltitude;
 
         KeyboardState lks;
@@ -82,6 +83,7 @@ namespace LD28
         float gradHeight = 0f;
         float outroCameraOffset = 0f;
         float outroCameraRot = 0f;
+        float parachuteOpenAmount = 0f;
 
         float planeFloorHight = 1510f;
 
@@ -140,6 +142,7 @@ namespace LD28
             texBlank = Content.Load<Texture2D>("blank");
             texDoor = Content.Load<Texture2D>("door");
             texGradient = Content.Load<Texture2D>("skygradient");
+            texParachute = Content.Load<Texture2D>("parachute");
             fontAltitude = Content.Load<SpriteFont>("altfont");
 
             speechBubble = new Speechbubble(Content);
@@ -239,7 +242,11 @@ namespace LD28
 
                         if (!pilot.IsInPlane)
                         {
-                            if (pilot.Position.Y < -400) outroCameraRot = MathHelper.Lerp(outroCameraRot, 0f, 0.1f);
+                            if (pilot.Position.Y < -400)
+                            {
+                                if (pilot.HasParachute && parachuteOpenAmount < 1f) parachuteOpenAmount += 0.1f;
+                                outroCameraRot = MathHelper.Lerp(outroCameraRot, 0f, 0.1f);
+                            }
                             else outroCameraRot = planeRot;
 
                             sfxWind.Play();
@@ -471,9 +478,19 @@ namespace LD28
             particleManager.Draw(GraphicsDevice, spriteBatch, gameCamera,0f,0.9f);
 
             enemyManager.Draw(GraphicsDevice, spriteBatch, gameCamera, 0f, 0f, false);
-            if (!pilot.IsInPlane) pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
+            if (!pilot.IsInPlane)
+            {
+                if (pilot.HasParachute)
+                {
+                    spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, gameCamera.CameraMatrix);
+                    spriteBatch.Draw(texParachute, pilot.Position + new Vector2(0f, -100f), null, Color.White, 0f, new Vector2(texParachute.Width / 2, texParachute.Height), parachuteOpenAmount, SpriteEffects.None, 1);
+                    spriteBatch.End();
+                }
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, gameCamera.CameraMatrix);
+                pilot.Draw(GraphicsDevice, spriteBatch, gameCamera);
+            }
+
+            spriteBatch.Begin(SpriteSortMode.Deferred,null, null, null, null, null, gameCamera.CameraMatrix);
             spriteBatch.Draw(texDoor, new Vector2(1200, 1000), new Rectangle(300 * doorFrame, 0, 300, 600), Color.White);
             gameMap.DrawLayer(spriteBatch, "internal", gameCamera);
             spriteBatch.End();
@@ -487,10 +504,11 @@ namespace LD28
             if (pilot.IsInPlane)
             {
                 spriteBatch.Begin();
-                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width/2, 20)+Vector2.One, Color.Black, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
-                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width/2, 20), Color.White, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
+                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width / 2, 20) + Vector2.One, Color.Black, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
+                spriteBatch.DrawString(fontAltitude, planeAltitude.ToString() + "ft", new Vector2(GraphicsDevice.Viewport.Width / 2, 20), Color.White, 0f, fontAltitude.MeasureString(planeAltitude.ToString() + "ft") * new Vector2(0.5f, 0), 1f, SpriteEffects.None, 1);
                 spriteBatch.End();
             }
+            
 
             
             speechBubble.Draw(spriteBatch, gameCamera);
@@ -563,6 +581,7 @@ namespace LD28
 
             doorOpen = false;
             doorFrame = 0;
+            parachuteOpenAmount = 0f;
         }
     }
 }

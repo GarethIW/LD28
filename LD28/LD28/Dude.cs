@@ -406,20 +406,26 @@ namespace LD28
 
                     justChangedDirTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
 
+                   
 
                     switch (State)
                     {
                         case AIState.Panic:
 
-                            
+                            if (Helper.Random.Next(500) == 0) State = AIState.GoingForParachute;
+                            if (Helper.Random.Next(300) == 0) State = AIState.GoingForDoor;
+
+                            if (gameHero.HasParachute && gameHero.Position.X < 3500)
+                            {
+                                State = AIState.GoingForParachute;
+                            }
                             
                             if (Vector2.Distance(chute.Position, Position) < 300f)
                             {
                                 State = AIState.GoingForParachute;
                             }
 
-                            if (Helper.Random.Next(500) == 0) State = AIState.GoingForParachute;
-                          
+                            
 
                             if (Helper.Random.Next(100) == 0 && justChangedDirTime < 0)
                             {
@@ -430,6 +436,7 @@ namespace LD28
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
                                 MoveLeftRight(-1);
+                            if (HasParachute) State = AIState.GoingForDoor;
                             break;
 
                         case AIState.AttackingOther:
@@ -440,11 +447,13 @@ namespace LD28
                                 punchReleased = true;
                                 punchHeld = false;
                                 punchHeldTime = 0;
+                                //AudioController.PlaySFX("swipe", 0.5f, -0.1f, 0.1f, Position);
+
                             }
                             break;
 
                         case AIState.GoingForDoor:
-                            targetPosition = new Vector2(300f, Position.Y);
+                            targetPosition = new Vector2(1200f, Position.Y);
                             if (targetPosition.X - 50 > Position.X)
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
@@ -459,12 +468,13 @@ namespace LD28
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
                                 MoveLeftRight(-1);
+                            if (HasParachute) State = AIState.GoingForDoor;
                             //if (Helper.Random.Next(500) == 0) State = AIState.Panic;
                             break;
       
                     }
 
-                    if (State == AIState.GoingForParachute || State == AIState.Panic)
+                    if (State == AIState.GoingForDoor || State == AIState.GoingForParachute || State == AIState.Panic)
                     {
 
                         if (Helper.Random.Next(200) == 0)
@@ -483,7 +493,7 @@ namespace LD28
                             }
                         }
 
-                        if (HasParachute) State = AIState.GoingForDoor;
+                        
 
                     }
 
@@ -634,18 +644,20 @@ namespace LD28
                             {
                                 //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
                                 if (IsPlayer)
-                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, this);
                                 else
                                 {
                                     switch (State)
                                     {
                                         case AIState.AttackingHero:
-                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 0f, faceDir, gameHero);
+                                            if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 0f, faceDir, this);
                                             State = AIState.Panic;
+                                            if (HasParachute) State = AIState.GoingForDoor;
                                             break;
                                         case AIState.AttackingOther:
-                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
+                                            EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, this);
                                             State = AIState.Panic;
+                                            if (HasParachute) State = AIState.GoingForDoor;
                                             break;
                                     }
                                 }
@@ -658,7 +670,7 @@ namespace LD28
                             {
                                 //AudioController.PlaySFX("swipe", 0.5f, -0.25f + ((float)rand.NextDouble() * 0.5f), 0f);
                                 if (IsPlayer)
-                                    EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                    EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, this);
                                 else
                                 {
                                     //switch (State)
@@ -667,7 +679,7 @@ namespace LD28
                                     if ((Position - gameHero.Position).Length() < attackRange + (20 * ((int)Item.Name + 2)) && gameHero.IsInPlane)
                                     {
                                         gameHero.DoHit(Position, (float)(250 * ((int)Item.Name + 2)), faceDir, gameHero);
-                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, this);
 
                                     }
                                     else
@@ -675,11 +687,12 @@ namespace LD28
 
                                         //    break;
                                         //case AIState.AttackingOther:
-                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, gameHero);
+                                        EnemyManager.Instance.CheckAttack(Position, faceDir, (float)(250 * ((int)Item.Name + 2)), attackRange + (20 * ((int)Item.Name + 2)), (int)Item.Name + 2, this);
                                         //  State = AIState.Panic;
                                         //break;
                                     }
-                                            State = AIState.Panic;
+                                    State = AIState.Panic;
+                                    if (HasParachute) State = AIState.GoingForDoor;
 
                                     //}
                                 }
@@ -936,6 +949,7 @@ namespace LD28
             {
                 punchReleased = true;
                 punchReleaseTime = 0;
+                AudioController.PlaySFX("swipe", 0.5f, -0.1f, 0.1f, Position);
             }
             punchHeld = p;
         }
@@ -1168,8 +1182,13 @@ namespace LD28
         //    return false;
         //}
 
-        internal void DoHit(Vector2 pos, float power, int face, Dude gameHero)
+        internal void DoHit(Vector2 pos, float power, int face, Dude attacker)
         {
+            if (attacker.Item == null)
+                AudioController.PlaySFX("hit_punch", 0.5f, -0.2f, 0.2f, Position);
+            else
+                AudioController.PlaySFX("hit_" + (int)attacker.Item.Name, 0.5f, -0.2f, 0.2f, Position);
+
             if (knockbackTime > 0 || !Active) return;
 
             if (Health > 1)

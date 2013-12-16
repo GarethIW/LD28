@@ -13,7 +13,7 @@ namespace LD28
 {
     class ItemManager
     {
-        const int NUM_WEAPONS = 2;
+        const int NUM_WEAPONS = 5;
         public List<Item> Items = new List<Item>();
 
         public static ItemManager Instance;
@@ -36,9 +36,12 @@ namespace LD28
 
             skeletonRenderer = new SkeletonRenderer(graphicsDevice);
 
-            sourceDict.Add("weapon0", new Rectangle(70, 91, 33, 30));
-            sourceDict.Add("weapon1", new Rectangle(2, 204, 19, 49));
-            sourceDict.Add("chute", new Rectangle(99, 154, 23, 48));
+            sourceDict.Add("weapon0", new Rectangle(217, 34, 29, 30));
+            sourceDict.Add("weapon1", new Rectangle(220, 2, 33, 30));
+            sourceDict.Add("weapon2", new Rectangle(2, 164, 19, 49));
+            sourceDict.Add("weapon3", new Rectangle(153, 2, 65, 18));
+            sourceDict.Add("weapon4", new Rectangle(2, 2, 80, 19));
+            sourceDict.Add("chute", new Rectangle(126, 72, 23, 48));
         }
 
         public void Update(GameTime gameTime, Camera gameCamera, Map gameMap, Dude gameHero, float planeRot)
@@ -78,9 +81,9 @@ namespace LD28
 
         public void SpawnRandom(int number, float floorHeight)
         {
-            for (int i = 0; i < number; i++)
+            for (int i = 0; i < NUM_WEAPONS; i++)
             {
-                int type = Helper.Random.Next(NUM_WEAPONS);
+                int type = i;// Helper.Random.Next(NUM_WEAPONS);
                 SpawnWorld(ItemType.Melee, (ItemName)type, new Vector2(Helper.RandomFloat(1500f, 5000f),floorHeight));
             }
         }

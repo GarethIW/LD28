@@ -94,12 +94,12 @@ namespace LD28
             Enemies.Add(d);
         }
 
-        public bool CheckAttack(Vector2 pos, int faceDir, float power, float maxDist, int maxHits, Dude gameHero)
+        public bool CheckAttack(Vector2 pos, int faceDir, float power, float maxDist, int maxHits, Dude attacker)
         {
             float mindist = 10000f;
             int numHits = 0;
 
-            foreach (Dude r in Enemies.Where(en=>en.IsInPlane).OrderByDescending(en => en.HasParachute))
+            foreach (Dude r in Enemies.Where(en=>en.IsInPlane && en!=attacker).OrderByDescending(en => en.HasParachute))
             {
                 if ((r.Position - pos).Length() < mindist && (r.Position - pos).Length() < maxDist && r.Active && r.knockbackTime<=0)
                 {
@@ -108,8 +108,8 @@ namespace LD28
                         
                         numHits++;
                         if (numHits <= maxHits)
-                            r.DoHit(pos, power, faceDir, gameHero);
-                        mindist = (r.Position - pos).Length();
+                            r.DoHit(pos, power, faceDir, attacker);
+                        //mindist = (r.Position - pos).Length();
                         
                     }
                 }

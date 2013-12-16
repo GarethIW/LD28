@@ -9,6 +9,7 @@ using System.IO;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using TiledLib;
 
 
 namespace LD28
@@ -38,6 +39,13 @@ namespace LD28
             effects.Add("explode", content.Load<SoundEffect>("sfx/explode"));
             effects.Add("door", content.Load<SoundEffect>("sfx/door"));
             effects.Add("splat", content.Load<SoundEffect>("sfx/splat"));
+            effects.Add("swipe", content.Load<SoundEffect>("sfx/swipe"));
+            effects.Add("hit_punch", content.Load<SoundEffect>("sfx/hit_punch"));
+            effects.Add("hit_0", content.Load<SoundEffect>("sfx/hit_0"));
+            effects.Add("hit_1", content.Load<SoundEffect>("sfx/hit_1"));
+            effects.Add("hit_2", content.Load<SoundEffect>("sfx/hit_2"));
+            effects.Add("hit_3", content.Load<SoundEffect>("sfx/hit_1"));
+            effects.Add("hit_4", content.Load<SoundEffect>("sfx/hit_4"));
 
 
 
@@ -132,9 +140,11 @@ namespace LD28
 
         internal static void PlaySFX(string name, float volume, float minpitch, float maxpitch, Vector2 Position)
         {
-            //Vector2 screenPos = Vector2.Transform(Position, GameManager.Camera.CameraMatrix);
-            //float pan = MathHelper.Clamp((screenPos.X - (GameManager.Camera.Width / 2)) / (GameManager.Camera.Width / 2), -1f, 1f);
-            //effects[name].Play(volume * sfxvolume, minpitch + ((float)randomNumber.NextDouble() * (maxpitch - minpitch)), pan);
+            Vector2 screenPos = Vector2.Transform(Position, Camera.Instance.CameraMatrix);
+            //float pan = MathHelper.Clamp((screenPos.X - (Camera.Instance.Width / 2)) / (Camera.Instance.Width / 2), -1f, 1f);
+            float pan = (screenPos.X - (Camera.Instance.Width / 2)) / (Camera.Instance.Width / 2);
+            if(pan>-1f && pan<1f)
+                effects[name].Play(volume * sfxvolume, minpitch + ((float)randomNumber.NextDouble() * (maxpitch - minpitch)), pan);
         }
 
 

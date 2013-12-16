@@ -1,0 +1,434 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LD28.Mono.Linux</RootNamespace>
+    <AssemblyName>GoingDown</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\LD28\AudioController.cs">
+      <Link>AudioController.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Dude.cs">
+      <Link>Dude.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\EnemyManager.cs">
+      <Link>EnemyManager.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Helper.cs">
+      <Link>Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Item.cs">
+      <Link>Item.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ItemManager.cs">
+      <Link>ItemManager.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\LD28Game.cs">
+      <Link>LD28Game.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\ParticleManager.cs">
+      <Link>ParticleManager.cs</Link>
+    </Compile>
+    <Compile Include="..\LD28\Speechbubble.cs">
+      <Link>Speechbubble.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Animation.cs">
+      <Link>Spine\Animation.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Atlas.cs">
+      <Link>Spine\Atlas.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\attachments\AtlasAttachmentLoader.cs">
+      <Link>Spine\Attachments\AtlasAttachmentLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\attachments\Attachment.cs">
+      <Link>Spine\Attachments\Attachment.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\attachments\AttachmentLoader.cs">
+      <Link>Spine\Attachments\AttachmentLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\attachments\AttachmentType.cs">
+      <Link>Spine\Attachments\AttachmentType.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\attachments\RegionAttachment.cs">
+      <Link>Spine\Attachments\RegionAttachment.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\BaseAtlas.cs">
+      <Link>Spine\BaseAtlas.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Bone.cs">
+      <Link>Spine\Bone.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\BoneData.cs">
+      <Link>Spine\BoneData.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Json.cs">
+      <Link>Spine\Json.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Skeleton.cs">
+      <Link>Spine\Skeleton.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\SkeletonData.cs">
+      <Link>Spine\SkeletonData.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\SkeletonJson.cs">
+      <Link>Spine\SkeletonJson.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\SkeletonRenderer.cs">
+      <Link>Spine\SkeletonRenderer.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Skin.cs">
+      <Link>Spine\Skin.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\Slot.cs">
+      <Link>Spine\Slot.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\SlotData.cs">
+      <Link>Spine\SlotData.cs</Link>
+    </Compile>
+    <Compile Include="..\ld28\spine\SpriteBatcher.cs">
+      <Link>Spine\SpriteBatcher.cs</Link>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\MonoGame\MonoGame.Framework\bin\Linux\Debug\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\_Dependencies\lin\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\MonoGame\MonoGame.Framework\bin\Linux\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tao.Sdl, Version=1.2.13.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\MonoGame\MonoGame.Framework\bin\Linux\Debug\Tao.Sdl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="C:\Program Files %28x86%29\MonoGame\v3.0\Assemblies\Linux\SDL.dll">
+      <Link>SDL.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="C:\Program Files %28x86%29\MonoGame\v3.0\Assemblies\Linux\SDL_Mixer.dll">
+      <Link>SDL_Mixer.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TiledLib.Mono.Linux\TiledLib.Mono.Linux.csproj">
+      <Project>{ddaba081-1dca-4821-8317-5f499e421074}</Project>
+      <Name>TiledLib.Mono.Linux</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\altfont.xnb">
+      <Link>Content\altfont.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\blank.xnb">
+      <Link>Content\blank.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\cloud.xnb">
+      <Link>Content\cloud.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-01.xnb">
+      <Link>Content\clouds\Cloud-01.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-02.xnb">
+      <Link>Content\clouds\Cloud-02.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-03.xnb">
+      <Link>Content\clouds\Cloud-03.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-04.xnb">
+      <Link>Content\clouds\Cloud-04.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-05.xnb">
+      <Link>Content\clouds\Cloud-05.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-06.xnb">
+      <Link>Content\clouds\Cloud-06.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-07.xnb">
+      <Link>Content\clouds\Cloud-07.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-08.xnb">
+      <Link>Content\clouds\Cloud-08.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-09.xnb">
+      <Link>Content\clouds\Cloud-09.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\clouds\Cloud-10.xnb">
+      <Link>Content\clouds\Cloud-10.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\door.xnb">
+      <Link>Content\door.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\dude\dude.atlas">
+      <Link>Content\dude\dude.atlas</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\dude\dude.json">
+      <Link>Content\dude\dude.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\dude\dude.xnb">
+      <Link>Content\dude\dude.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\Overhead-Open.xnb">
+      <Link>Content\Overhead-Open.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\parachute.xnb">
+      <Link>Content\parachute.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-Cockpit.xnb">
+      <Link>Content\PlaneInner-Cockpit.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-ExitClosed.xnb">
+      <Link>Content\PlaneInner-ExitClosed.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-ExitOpen.xnb">
+      <Link>Content\PlaneInner-ExitOpen.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-FirstClass.xnb">
+      <Link>Content\PlaneInner-FirstClass.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-Partition.xnb">
+      <Link>Content\PlaneInner-Partition.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-Seating.xnb">
+      <Link>Content\PlaneInner-Seating.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneInner-Toilet.xnb">
+      <Link>Content\PlaneInner-Toilet.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\planemap.xnb">
+      <Link>Content\planemap.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\PlaneOuter-Tail.xnb">
+      <Link>Content\PlaneOuter-Tail.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\door.xnb">
+      <Link>Content\sfx\door.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\engine.xnb">
+      <Link>Content\sfx\engine.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\explode.xnb">
+      <Link>Content\sfx\explode.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\hit_0.xnb">
+      <Link>Content\sfx\hit_0.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\hit_1.xnb">
+      <Link>Content\sfx\hit_1.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\hit_2.xnb">
+      <Link>Content\sfx\hit_2.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\hit_4.xnb">
+      <Link>Content\sfx\hit_4.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\hit_punch.xnb">
+      <Link>Content\sfx\hit_punch.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\panic.xnb">
+      <Link>Content\sfx\panic.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\rattle.xnb">
+      <Link>Content\sfx\rattle.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\splat.xnb">
+      <Link>Content\sfx\splat.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\swipe.xnb">
+      <Link>Content\sfx\swipe.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\sfx\wind.xnb">
+      <Link>Content\sfx\wind.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\skygradient.xnb">
+      <Link>Content\skygradient.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\speechbubble.xnb">
+      <Link>Content\speechbubble.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ld28\bin\x86\debug\content\speechfont.xnb">
+      <Link>Content\speechfont.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
