@@ -129,7 +129,7 @@
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\MonoGame\MonoGame.Framework\bin\Linux\Debug\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\..\_Dependencies\lin\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
