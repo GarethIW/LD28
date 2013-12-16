@@ -441,6 +441,8 @@ namespace LD28
                                 punchReleased = true;
                                 punchHeld = false;
                                 punchHeldTime = 0;
+                                //AudioController.PlaySFX("swipe", 0.5f, -0.1f, 0.1f, Position);
+
                             }
                             break;
 
@@ -941,6 +943,7 @@ namespace LD28
             {
                 punchReleased = true;
                 punchReleaseTime = 0;
+                AudioController.PlaySFX("swipe", 0.5f, -0.1f, 0.1f, Position);
             }
             punchHeld = p;
         }
@@ -1173,8 +1176,13 @@ namespace LD28
         //    return false;
         //}
 
-        internal void DoHit(Vector2 pos, float power, int face, Dude gameHero)
+        internal void DoHit(Vector2 pos, float power, int face, Dude attacker)
         {
+            if (attacker.Item == null)
+                AudioController.PlaySFX("hit_punch", 0.5f, -0.2f, 0.2f, Position);
+            else
+                AudioController.PlaySFX("hit_" + (int)attacker.Item.Name, 0.5f, -0.2f, 0.2f, Position);
+
             if (knockbackTime > 0 || !Active) return;
 
             if (Health > 1)

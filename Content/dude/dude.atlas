@@ -16,6 +16,27 @@ weapon0
   orig: 33, 30
   offset: 0, 0
   index: -1
+weapon2
+  rotate: false
+  xy: 70, 91
+  size: 33, 30
+  orig: 33, 30
+  offset: 0, 0
+  index: -1
+weapon3
+  rotate: false
+  xy: 70, 91
+  size: 33, 30
+  orig: 33, 30
+  offset: 0, 0
+  index: -1
+weapon4
+  rotate: false
+  xy: 70, 91
+  size: 33, 30
+  orig: 33, 30
+  offset: 0, 0
+  index: -1
 _0000_Head
   rotate: false
   xy: 71, 2

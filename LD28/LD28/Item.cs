@@ -19,6 +19,9 @@ namespace LD28
     {
         Weapon0,
         Weapon1,
+        Weapon2,
+        Weapon3,
+        Weapon4,
         Chute
     }
 

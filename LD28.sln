@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD28", "LD28\LD28\LD28.csproj", "{7D8526EE-B4BE-43BD-B55E-661B15C50A95}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Content", "Content\Content.contentproj", "{AE94D78C-96E7-4D84-A917-6909678D6CAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.contentproj", "{AE94D78C-96E7-4D84-A917-6909678D6CAF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TiledLib", "TiledLib", "{5522E934-1665-4504-A8EA-864F665C3603}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledLib.Mono.Windows", "LD28\TiledLib.Mono.Windows\TiledLib.Mono.Windows.csproj", "{14AE59FB-38B9-4423-A3FF-3521ED686A33}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD28.Mono.Windows", "LD28\LD28.Mono.Windows\LD28.Mono.Windows.csproj", "{4A44BF84-566B-4763-A12A-7292F2C50A8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD28.Mono.Linux", "LD28\LD28.Mono.Linux\LD28.Mono.Linux.csproj", "{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledLib.Mono.Linux", "LD28\TiledLib.Mono.Linux\TiledLib.Mono.Linux.csproj", "{DDABA081-1DCA-4821-8317-5F499E421074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +87,26 @@ Global
 		{4A44BF84-566B-4763-A12A-7292F2C50A8F}.Release|Mixed Platforms.Build.0 = Release|x86
 		{4A44BF84-566B-4763-A12A-7292F2C50A8F}.Release|x86.ActiveCfg = Release|x86
 		{4A44BF84-566B-4763-A12A-7292F2C50A8F}.Release|x86.Build.0 = Release|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Debug|x86.ActiveCfg = Debug|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Debug|x86.Build.0 = Debug|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Release|Any CPU.ActiveCfg = Release|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Release|x86.ActiveCfg = Release|x86
+		{0D84D8ED-61AA-4F9A-94CB-9FC95C99ED9C}.Release|x86.Build.0 = Release|x86
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DDABA081-1DCA-4821-8317-5F499E421074}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,5 +115,6 @@ Global
 		{84C8D1CA-634D-4977-ADD3-23CC6CB36F5A} = {5522E934-1665-4504-A8EA-864F665C3603}
 		{43E57147-8C31-48F8-8C54-F090BF9D715B} = {5522E934-1665-4504-A8EA-864F665C3603}
 		{14AE59FB-38B9-4423-A3FF-3521ED686A33} = {5522E934-1665-4504-A8EA-864F665C3603}
+		{DDABA081-1DCA-4821-8317-5F499E421074} = {5522E934-1665-4504-A8EA-864F665C3603}
 	EndGlobalSection
 EndGlobal

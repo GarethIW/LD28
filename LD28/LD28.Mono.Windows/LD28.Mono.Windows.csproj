@@ -32,8 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LD28\AudioController.cs">
@@ -153,7 +152,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="..\LD28\bin\x86\Debug\Content\parachute.xnb">
+      <Link>Content\parachute.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\hit_0.xnb">
+      <Link>Content\sfx\hit_0.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\hit_1.xnb">
+      <Link>Content\sfx\hit_1.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\hit_2.xnb">
+      <Link>Content\sfx\hit_2.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\hit_4.xnb">
+      <Link>Content\sfx\hit_4.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\hit_punch.xnb">
+      <Link>Content\sfx\hit_punch.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LD28\bin\x86\Debug\Content\sfx\swipe.xnb">
+      <Link>Content\sfx\swipe.xnb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiledLib.Mono.Windows\TiledLib.Mono.Windows.csproj">
       <Project>{14ae59fb-38b9-4423-a3ff-3521ed686a33}</Project>

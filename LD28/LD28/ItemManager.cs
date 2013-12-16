@@ -13,7 +13,7 @@ namespace LD28
 {
     class ItemManager
     {
-        const int NUM_WEAPONS = 2;
+        const int NUM_WEAPONS = 5;
         public List<Item> Items = new List<Item>();
 
         public static ItemManager Instance;
@@ -37,7 +37,10 @@ namespace LD28
             skeletonRenderer = new SkeletonRenderer(graphicsDevice);
 
             sourceDict.Add("weapon0", new Rectangle(70, 91, 33, 30));
-            sourceDict.Add("weapon1", new Rectangle(2, 204, 19, 49));
+            sourceDict.Add("weapon1", new Rectangle(70, 91, 33, 30));
+            sourceDict.Add("weapon2", new Rectangle(2, 204, 19, 49));
+            sourceDict.Add("weapon3", new Rectangle(70, 91, 33, 30));
+            sourceDict.Add("weapon4", new Rectangle(70, 91, 33, 30));
             sourceDict.Add("chute", new Rectangle(99, 154, 23, 48));
         }
 
