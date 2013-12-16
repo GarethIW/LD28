@@ -430,6 +430,7 @@ namespace LD28
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
                                 MoveLeftRight(-1);
+                            if (HasParachute) State = AIState.GoingForDoor;
                             break;
 
                         case AIState.AttackingOther:
@@ -459,12 +460,13 @@ namespace LD28
                                 MoveLeftRight(1);
                             if (targetPosition.X + 50 < Position.X)
                                 MoveLeftRight(-1);
+                            if (HasParachute) State = AIState.GoingForDoor;
                             //if (Helper.Random.Next(500) == 0) State = AIState.Panic;
                             break;
       
                     }
 
-                    if (State == AIState.GoingForParachute || State == AIState.Panic)
+                    if (State == AIState.GoingForDoor || State == AIState.GoingForParachute || State == AIState.Panic)
                     {
 
                         if (Helper.Random.Next(200) == 0)
@@ -483,7 +485,7 @@ namespace LD28
                             }
                         }
 
-                        if (HasParachute) State = AIState.GoingForDoor;
+                        
 
                     }
 
@@ -642,10 +644,12 @@ namespace LD28
                                         case AIState.AttackingHero:
                                             if ((Position - gameHero.Position).Length() < attackRange && gameHero.IsInPlane) gameHero.DoHit(Position, 0f, faceDir, gameHero);
                                             State = AIState.Panic;
+                                            if (HasParachute) State = AIState.GoingForDoor;
                                             break;
                                         case AIState.AttackingOther:
                                             EnemyManager.Instance.CheckAttack(Position, faceDir, 0f, attackRange, 1, gameHero);
                                             State = AIState.Panic;
+                                            if (HasParachute) State = AIState.GoingForDoor;
                                             break;
                                     }
                                 }
@@ -679,7 +683,8 @@ namespace LD28
                                         //  State = AIState.Panic;
                                         //break;
                                     }
-                                            State = AIState.Panic;
+                                    State = AIState.Panic;
+                                    if (HasParachute) State = AIState.GoingForDoor;
 
                                     //}
                                 }
