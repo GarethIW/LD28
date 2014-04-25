@@ -8,8 +8,15 @@ Twitch stream: http://www.twitch.tv/garethiw
 
 Our entry for the 28th Ludum Dare, for the Jam competition.
 
-Repositiory contains a VS2012 solution, which requires XNA GS4 to be installed, as per the instructions [here](http://stackoverflow.com/questions/10881005/how-to-install-xna-game-studio-on-visual-studio-2012)
 
-MonoGame is also required for the Windows OpenGL and Linux projects. The _References folder contains custom-built Monogame libraries to reference in the project.
+Building
+--------
 
-Repository also contains all art assets.
+(Windows)
+
+Requires:
+* VS2012 or 2013 (only tested on 2012 but 2013 should be fine)
+* XNA Game Studio - can be installed using the [unofficial installers](http://msxna.codeplex.com/releases)
+* Font is included in the dependencies dir.
+
+The game can be compiled with either the standard XNA libraries or Monogame, simply by swapping out the references. The main game project currently references the supplied Monogame .dll which is a recent build of the WindowsGL port. 
